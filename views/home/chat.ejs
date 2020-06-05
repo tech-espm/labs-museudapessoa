@@ -1,0 +1,159 @@
+﻿<div id="conversa-corpo"><div id="conversa-container"></div></div>
+<form id="conversa-rodape" method="post" action=".">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="input-group">
+					<input type="text" id="txtMensagem" class="form-control" placeholder="Digite uma mensagem">
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="button" title="Enviar"><i class="fa fa-send-o fa-nomargin"></i><span class="sr-only">Enviar</span></button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<%- contentFor("styles") %>
+<style type="text/css">
+	#conversa-corpo {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 64px;
+		overflow: auto;
+		padding: 0 15px 15px;
+	}
+
+	#conversa-container {
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	.mensagem {
+		text-align: left;
+		display: inline-block;
+		min-width: 150px;
+		max-width: 450px;
+		border-style: solid;
+		margin: 15px 0 0;
+	}
+
+	.mensagem-container {
+		border-radius: 0 0 8px 8px;
+		padding: 0 10px 10px;
+	}
+
+		.mensagem-container > h1, .mensagem-container > p {
+			font-size: 14px;
+			margin: 0 0 5px;
+		}
+
+		.mensagem-container > h1 {
+			font-weight: bold;
+		}
+
+		.mensagem-container > p {
+			white-space: pre-wrap;
+		}
+
+		.mensagem-container > div {
+			text-align: right;
+			font-weight: bold;
+			font-size: 10px;
+		}
+
+	.mensagem-outro {
+		color: #333;
+		border-radius: 0 8px 8px 8px;
+		border-color: #fff transparent transparent;
+		border-width: 10px 0 0 10px;
+	}
+
+		.mensagem-outro > .mensagem-container {
+			background-color: #fff;
+		}
+
+	.mensagem-eu {
+		color: #000;
+		border-radius: 8px 0 8px 8px;
+		margin-left: auto;
+		border-color: #dcf8c6 transparent transparent;
+		border-width: 10px 10px 0 0;
+	}
+
+		.mensagem-eu > .mensagem-container {
+			background-color: #dcf8c6;
+		}
+
+	.mensagem-eu.erro {
+		border-color: #f8c6c6 transparent transparent;
+	}
+
+		.mensagem-eu.erro > .mensagem-container {
+			background-color: #f8c6c6;
+		}
+
+	.mensagem-eu.espera {
+		border-color: #f5f5f5 transparent transparent;
+	}
+
+		.mensagem-eu.espera > .mensagem-container {
+			background-color: #f5f5f5;
+		}
+
+	.mensagem-eu-img {
+		display: none;
+	}
+
+	#conversa-rodape {
+		position: fixed;
+		left: 0;
+		height: 64px;
+		right: 0;
+		bottom: 0;
+		padding: 15px 0;
+		background-color: rgba(255, 255, 255, 0.9);
+	}
+</style>
+
+<%- contentFor("scripts") %>
+<script type="text/javascript">
+	"use strict";
+
+	var $conversaContainer = $("#conversa-container"),
+		conversaRodape = document.getElementById("conversa-rodape"),
+		txtMensagem = document.getElementById("txtMensagem");
+
+	function agora() {
+		var d = new Date();
+		return format2(d.getHours()) + ":" + format2(d.getMinutes());
+	}
+
+	function adicionarMensagem(mensagem, nome) {
+		var $div = $(nome ?
+			'<div class="mensagem mensagem-outro"><div class="mensagem-container"><h1>' + encode(nome) + '</h1><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div>' :
+			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- root %>/imagens/loading-grey-t.gif" style="display: block; margin-bottom: 5px;" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
+		);
+
+		$conversaContainer.append($div);
+		return $div;
+	}
+
+	document.getElementById("conversa-rodape").onsubmit = function (e) {
+		cancelEvent(e);
+
+		var msg = trim(txtMensagem.value), $msg = null;
+		if (!$.active && msg) {
+			txtMensagem.value = "";
+			$msg = adicionarMensagem(msg);
+			$.ajax({
+				url: "<%- root %>/api/",
+			});
+			setTimeout(function () { $msg.find(".mensagem-eu").removeClass("espera").addClass("erro"); $msg.find("img").remove(); }, 2000);
+		}
+
+		return false;
+	}
+</script>
