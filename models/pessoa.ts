@@ -1,9 +1,11 @@
 ﻿import Sql = require("../infra/sql");
 import Resposta = require("./resposta");
+import ajustarNome = require("../utils/ajustarNome");
 
 export = class Pessoa {
 	public id: number;
 	public nome: string;
+	public nomeajustado: string;
 	public feminino: number;
 	public criacao: string;
 	public respostas: Resposta[];
@@ -12,6 +14,9 @@ export = class Pessoa {
 		p.nome = (p.nome || "").normalize().trim();
 		if (p.nome.length < 3 || p.nome.length > 100)
 			return "Nome inválido";
+		if (p.nome.indexOf("+") >= 0)
+			return "Nome não pode conter o caracter +";
+		p.nomeajustado = ajustarNome(p.nome);
 		if (isNaN(p.feminino) || p.feminino < 0 || p.feminino > 1)
 			p.feminino = 1;
 		if (!p.respostas)
@@ -28,7 +33,7 @@ export = class Pessoa {
 		let lista: Pessoa[] = null;
 
 		await Sql.conectar(async (sql: Sql) => {
-			lista = (await sql.query("select id, nome, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[];
+			lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[];
 		});
 
 		return lista || [];
@@ -38,7 +43,7 @@ export = class Pessoa {
 		let lista: Pessoa[] = null;
 
 		await Sql.conectar(async (sql: Sql) => {
-			lista = (await sql.query("select id, nome, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
+			lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
 
 			if (lista && lista.length)
 				lista[0].respostas = await Resposta.listar(sql, id);
@@ -56,7 +61,7 @@ export = class Pessoa {
 			await sql.beginTransaction();
 
 			try {
-				await sql.query("insert into pessoa (nome, feminino, criacao) values (?, ?, now())", [p.nome, p.feminino]);
+				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao) values (?, ?, now())", [p.nome, p.nomeajustado, p.feminino]);
 				p.id = await sql.scalar("select last_insert_id()") as number;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY") {
@@ -91,7 +96,7 @@ export = class Pessoa {
 			await sql.beginTransaction();
 
 			try {
-				await sql.query("update pessoa set nome = ?, feminino = ? where id = ?", [p.nome, p.feminino, p.id]);
+				await sql.query("update pessoa set nome = ?, nomeajustado = ?, feminino = ? where id = ?", [p.nome, p.nomeajustado, p.feminino, p.id]);
 				if (!sql.linhasAfetadas) {
 					res = "Pessoa não encontrada";
 					return;
@@ -156,7 +161,7 @@ export = class Pessoa {
 		return res;
 	}
 
-	public static async iniciarConversa(): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
+	public static async iniciarConversa(nomepessoa: string): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
 		// @@@ Pegar o idconversa da API da IBM, e a resposta da mensagem de boas vindas,
 		// que deveria ser o id de um assunto...
 		let idconversa = "abc";
@@ -164,10 +169,15 @@ export = class Pessoa {
 		const respostaInt = parseInt(resposta);
 
 		let idpessoa = 0;
-		let nomepessoa = "";
 
 		await Sql.conectar(async (sql: Sql) => {
-			const lista = (await sql.query("select id, nome from pessoa order by id asc")) as Pessoa[];
+			let lista: Pessoa[] = null;
+
+			if (nomepessoa && (nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ")))
+				lista = (await sql.query("select id, nome from pessoa where nomeajustado = ?", [nomepessoa])) as Pessoa[];
+
+			if (!lista || !lista.length)
+				lista = (await sql.query("select id, nome from pessoa order by id asc")) as Pessoa[];
 
 			if (lista && lista.length) {
 				const i = ((Math.random() * lista.length * 100) | 0) % lista.length;

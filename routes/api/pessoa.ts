@@ -69,8 +69,8 @@ router.get("/excluir", wrap(async (req: express.Request, res: express.Response) 
 	jsonRes(res, 400, isNaN(id) ? "Dados inválidos" : await Pessoa.excluir(id));
 }));
 
-router.get("/iniciarConversa", wrap(async (req: express.Request, res: express.Response) => {
-	res.json(await Pessoa.iniciarConversa());
+router.get("/iniciarConversa/:n?", wrap(async (req: express.Request, res: express.Response) => {
+	res.json(await Pessoa.iniciarConversa(req.params["n"]));
 }));
 
 router.post("/enviarMensagem", wrap(async (req: express.Request, res: express.Response) => {

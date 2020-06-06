@@ -41,10 +41,12 @@ CREATE TABLE assunto (
 CREATE TABLE pessoa (
   id int NOT NULL AUTO_INCREMENT,
   nome varchar(100) NOT NULL,
+  nomeajustado varchar(100) NOT NULL,
   feminino tinyint(4) NOT NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY nome_UN (nome)
+  UNIQUE KEY nome_UN (nome),
+  KEY nomeajustado_idx (nomeajustado)
 );
 
 -- DROP TABLE IF EXISTS resposta;

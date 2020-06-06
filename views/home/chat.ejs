@@ -180,7 +180,11 @@
 	Notification.wait();
 
 	$.ajax({
+		//<% if (nomepessoa) { %> {
+		url: "<%- root %>/api/pessoa/iniciarConversa/<%- encodeURIComponent(nomepessoa.trim()) %>",
+		//<% } else { %>
 		url: "<%- root %>/api/pessoa/iniciarConversa",
+		//<% } %>
 		cache: false,
 		success: function (dados) {
 			idconversa = dados.idconversa;

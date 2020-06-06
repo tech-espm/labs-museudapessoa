@@ -14,8 +14,8 @@ router.all("/", wrap(async (req: express.Request, res: express.Response) => {
 	}
 }));
 
-router.all("/chat", wrap(async (req: express.Request, res: express.Response) => {
-	res.render("home/chat", { layout: "layout-externo" });
+router.all("/chat/:n?", wrap(async (req: express.Request, res: express.Response) => {
+	res.render("home/chat", { layout: "layout-externo", nomepessoa: (req.params["n"] || "") });
 }));
 
 router.all("/login", wrap(async (req: express.Request, res: express.Response) => {

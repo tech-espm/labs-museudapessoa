@@ -140,7 +140,7 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.post("/api/pessoa/alterar", pessoa, function (response) {
+			JsonWebApi.post("<%- root %>/api/pessoa/alterar", pessoa, function (response) {
 				if (response.success) {
 					for (var i = 0, a = 0; i < proximaResposta; i++) {
 						if (!document.getElementById("resposta" + i))
@@ -156,7 +156,7 @@
 
 			//<% } else { %>
 
-			JsonWebApi.post("/api/pessoa/criar", pessoa, function (response) {
+			JsonWebApi.post("<%- root %>/api/pessoa/criar", pessoa, function (response) {
 				if (response.success) {
 					$("#respostas").empty();
 					resetForm("#form");

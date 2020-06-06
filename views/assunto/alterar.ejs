@@ -39,7 +39,7 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("/api/assunto/alterar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/assunto/alterar", form, function (response) {
 				if (response.success)
 					Notification.success("Assunto alterado com sucesso! " + emoji.happy);
 				else
@@ -48,7 +48,7 @@
 
 			//<% } else { %>
 
-			JsonWebApi.postFormData("/api/assunto/criar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/assunto/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
 					Notification.success("Assunto criado com sucesso! " + emoji.happy);
