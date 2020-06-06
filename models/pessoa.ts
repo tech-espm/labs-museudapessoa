@@ -155,4 +155,48 @@ export = class Pessoa {
 
 		return res;
 	}
+
+	public static async iniciarConversa(): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
+		// @@@ Pegar o idconversa da API da IBM, e a resposta da mensagem de boas vindas,
+		// que deveria ser o id de um assunto...
+		let idconversa = "abc";
+		let resposta = "999";
+		const respostaInt = parseInt(resposta);
+
+		let idpessoa = 0;
+		let nomepessoa = "";
+
+		await Sql.conectar(async (sql: Sql) => {
+			const lista = (await sql.query("select id, nome from pessoa order by id asc")) as Pessoa[];
+
+			if (lista && lista.length) {
+				const i = ((Math.random() * lista.length * 100) | 0) % lista.length;
+				idpessoa = lista[i].id;
+				nomepessoa = lista[i].nome;
+				resposta = (isNaN(respostaInt) ? null : await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]));
+			}
+		});
+
+		return {
+			idconversa: idconversa,
+			idpessoa: idpessoa,
+			nomepessoa: nomepessoa,
+			resposta: resposta || (`Olá! Me chamo ${nomepessoa}. Vamos conversar? 😊`)
+		};
+	}
+
+	public static async enviarMensagem(idconversa: string, idpessoa: number, mensagem: string): Promise<string> {
+		// @@@ Enviar a mensagem para a API da IBM, usando idconversa,
+		// e pegar a resposta, que deveria ser o id de um assunto...
+		let resposta = "999";
+		const respostaInt = parseInt(resposta);
+		if (isNaN(respostaInt))
+			return resposta;
+
+		await Sql.conectar(async (sql: Sql) => {
+			resposta = await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]);
+		});
+
+		return resposta || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊";
+	}
 };

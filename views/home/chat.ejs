@@ -4,9 +4,9 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="input-group">
-					<input type="text" id="txtMensagem" class="form-control" placeholder="Digite uma mensagem">
+					<input type="text" id="txtMensagem" class="form-control" autocomplete="off" placeholder="Digite uma mensagem">
 					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button" title="Enviar"><i class="fa fa-send-o fa-nomargin"></i><span class="sr-only">Enviar</span></button>
+						<button class="btn btn-primary" type="submit" title="Enviar"><i class="fa fa-send-o fa-nomargin"></i><span class="sr-only">Enviar</span></button>
 					</span>
 				</div>
 			</div>
@@ -122,9 +122,13 @@
 <script type="text/javascript">
 	"use strict";
 
-	var $conversaContainer = $("#conversa-container"),
+	var conversaCorpo = document.getElementById("conversa-corpo"),
+		$conversaContainer = $("#conversa-container"),
 		conversaRodape = document.getElementById("conversa-rodape"),
-		txtMensagem = document.getElementById("txtMensagem");
+		txtMensagem = document.getElementById("txtMensagem"),
+		idconversa = "",
+		idpessoa = 0,
+		nomepessoa = "";
 
 	function agora() {
 		var d = new Date();
@@ -134,10 +138,13 @@
 	function adicionarMensagem(mensagem, nome) {
 		var $div = $(nome ?
 			'<div class="mensagem mensagem-outro"><div class="mensagem-container"><h1>' + encode(nome) + '</h1><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div>' :
-			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- root %>/imagens/loading-grey-t.gif" style="display: block; margin-bottom: 5px;" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
+			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- root %>/imagens/loading-grey-t.gif" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
 		);
 
 		$conversaContainer.append($div);
+
+		conversaCorpo.scrollTo(0, $conversaContainer.height());
+
 		return $div;
 	}
 
@@ -145,15 +152,46 @@
 		cancelEvent(e);
 
 		var msg = trim(txtMensagem.value), $msg = null;
-		if (!$.active && msg) {
+		if (!$.active && msg && idconversa) {
 			txtMensagem.value = "";
 			$msg = adicionarMensagem(msg);
 			$.ajax({
-				url: "<%- root %>/api/",
+				url: "<%- root %>/api/pessoa/enviarMensagem?idconversa=" + encodeURIComponent(idconversa) + "&idpessoa=" + encodeURIComponent(idpessoa),
+				method: "post",
+				data: JSON.stringify({ mensagem: msg }),
+				contentType: "application/json",
+				processData: false,
+				success: function (dados) {
+					$msg.find("img").remove();
+					$msg.find(".mensagem-eu").removeClass("espera");
+					adicionarMensagem(dados, nomepessoa);
+				},
+				error: function () {
+					$msg.find("img").remove();
+					$msg.find(".mensagem-eu").removeClass("espera").addClass("erro");
+					Notification.error("Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad, true);
+				}
 			});
-			setTimeout(function () { $msg.find(".mensagem-eu").removeClass("espera").addClass("erro"); $msg.find("img").remove(); }, 2000);
 		}
 
 		return false;
 	}
+
+	Notification.wait();
+
+	$.ajax({
+		url: "<%- root %>/api/pessoa/iniciarConversa",
+		cache: false,
+		success: function (dados) {
+			idconversa = dados.idconversa;
+			idpessoa = dados.idpessoa;
+			nomepessoa = dados.nomepessoa;
+			adicionarMensagem(dados.resposta, nomepessoa);
+			Notification.hide();
+		},
+		error: function () {
+			var msg = "Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad;
+			Notification.error(msg, true);
+		}
+	});
 </script>

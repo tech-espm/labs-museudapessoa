@@ -69,4 +69,19 @@ router.get("/excluir", wrap(async (req: express.Request, res: express.Response) 
 	jsonRes(res, 400, isNaN(id) ? "Dados inválidos" : await Pessoa.excluir(id));
 }));
 
+router.get("/iniciarConversa", wrap(async (req: express.Request, res: express.Response) => {
+	res.json(await Pessoa.iniciarConversa());
+}));
+
+router.post("/enviarMensagem", wrap(async (req: express.Request, res: express.Response) => {
+	const idconversa = req.query["idconversa"];
+	const idpessoa = parseInt(req.query["idpessoa"]);
+	const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
+	if (!idconversa || isNaN(idpessoa) || idpessoa <= 0 || !mensagem) {
+		jsonRes(res, 400, "Dados inválidos");
+		return;
+	}
+	res.json(await Pessoa.enviarMensagem(idconversa, idpessoa, mensagem));
+}));
+
 export = router;
