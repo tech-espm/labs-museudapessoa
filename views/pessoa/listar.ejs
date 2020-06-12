@@ -84,7 +84,7 @@
 			});
 		} else if (this.getAttribute("data-share")) {
 			var url = location.href, i = url.lastIndexOf("/pessoa/listar"), a;
-			url = url.substr(0, url.lastIndexOf("/pessoa/listar")) + "/chat/" + encodeURIComponent(pessoa.nomeajustado).replace(/\%20/g, "+");
+			url = url.substr(0, i) + "/chat/" + encodeURIComponent(pessoa.nomeajustado).replace(/\%20/g, "+");
 
 			a = document.getElementById("aLink");
 			a.setAttribute("href", url);
