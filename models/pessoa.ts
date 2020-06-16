@@ -1,4 +1,9 @@
-﻿import Sql = require("../infra/sql");
+﻿// Se o projeto não compilar, pelo erro Cannot find name 'File', precisa
+// acrescentar a lib DOM ao array compilerOptions.lib no arquivo tsconfig.json
+import AssistantV2 = require("ibm-watson/assistant/v2");
+import { IamAuthenticator } from "ibm-watson/auth";
+import appsettings = require("../appsettings");
+import Sql = require("../infra/sql");
 import Resposta = require("./resposta");
 import ajustarNome = require("../utils/ajustarNome");
 
@@ -162,10 +167,27 @@ export = class Pessoa {
 	}
 
 	public static async iniciarConversa(nomepessoa: string): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
-		// @@@ Pegar o idconversa da API da IBM, e a resposta da mensagem de boas vindas,
+		// Pega o idconversa da API da IBM, e a resposta da mensagem de boas vindas,
 		// que deveria ser o id de um assunto...
-		let idconversa = "abc";
-		let resposta = "999";
+		const assistant = new AssistantV2({
+			version: appsettings.assistantVersion,
+			authenticator: new IamAuthenticator({
+				apikey: appsettings.serviceCredentials.apikey,
+			}),
+			url: appsettings.serviceCredentials.url,
+		});
+		const respostaSessao = await assistant.createSession({ assistantId: appsettings.assistantId });
+		let idconversa = respostaSessao.result.session_id;
+		// Como a conversa é simples, o diálogo só tem um nível de profundidade,
+		// daria para utilizar a versão sem estado, mais simples???
+		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateless
+		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateful
+		const respostaMensagem = await assistant.message({
+			assistantId: appsettings.assistantId,
+			sessionId: idconversa,
+			input: { message_type: "text", text: "" }
+		});
+		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || "");
 		const respostaInt = parseInt(resposta);
 
 		let idpessoa = 0;
@@ -196,16 +218,34 @@ export = class Pessoa {
 	}
 
 	public static async enviarMensagem(idconversa: string, idpessoa: number, mensagem: string): Promise<string> {
-		// @@@ Enviar a mensagem para a API da IBM, usando idconversa,
-		// e pegar a resposta, que deveria ser o id de um assunto...
-		let resposta = "999";
+		// Envia a mensagem para a API da IBM, usando idconversa,
+		// e pega a resposta, que deveria ser o id de um assunto...
+		const assistant = new AssistantV2({
+			version: appsettings.assistantVersion,
+			authenticator: new IamAuthenticator({
+				apikey: appsettings.serviceCredentials.apikey,
+			}),
+			url: appsettings.serviceCredentials.url,
+		});
+		// Como a conversa é simples, o diálogo só tem um nível de profundidade,
+		// daria para utilizar a versão sem estado, mais simples???
+		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateless
+		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateful
+		const respostaMensagem = await assistant.message({
+			assistantId: appsettings.assistantId,
+			sessionId: idconversa,
+			input: { message_type: "text", text: mensagem }
+		});
+		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || "");
 		const respostaInt = parseInt(resposta);
-		if (isNaN(respostaInt))
+		if (resposta && isNaN(respostaInt))
 			return resposta;
 
-		await Sql.conectar(async (sql: Sql) => {
-			resposta = await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]);
-		});
+		if (!isNaN(respostaInt)) {
+			await Sql.conectar(async (sql: Sql) => {
+				resposta = await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]);
+			});
+		}
 
 		return resposta || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊";
 	}
