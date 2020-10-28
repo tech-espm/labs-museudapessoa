@@ -54,7 +54,7 @@ CREATE TABLE resposta (
   id int NOT NULL AUTO_INCREMENT,
   idpessoa int NOT NULL,
   idassunto int NOT NULL,
-  texto varchar(10000) NOT NULL,
+  texto text NOT NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY idpessoaidassunto_UN (idpessoa, idassunto),

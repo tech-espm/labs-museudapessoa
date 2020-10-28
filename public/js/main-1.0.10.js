@@ -1531,6 +1531,8 @@ window.BlobDownloader = {
 
 		switch (keyCode) {
 			case 9: // tab
+				if (data.menuVisible && data.selection >= 0)
+					data.select();
 			case 16: // shift
 			case 17: // ctrl
 			case 37: // left
@@ -1831,7 +1833,10 @@ window.BlobDownloader = {
 		button.setAttribute("tabindex", "-1");
 		button.cbSearchSelect = select;
 		i.className = "fa fa-nomargin fa-filter";
-		input.className = "form-control upper select-arrow";
+		if (window.prepareCbSearchAllowLower)
+			input.className = "form-control select-arrow" + ((select.className.indexOf("upper") >= 0) ? " upper" : "");
+		else
+			input.className = "form-control upper select-arrow";
 		input.setAttribute("type", "text");
 		input.setAttribute("spellcheck", "false");
 		input.setAttribute("tabindex", "-1");
