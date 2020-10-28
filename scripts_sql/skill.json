@@ -1,0 +1,1022 @@
+{
+  "intents": [
+    {
+      "intent": "boas-vindas",
+      "examples": [
+        {
+          "text": "eae"
+        },
+        {
+          "text": "e ae"
+        },
+        {
+          "text": "eai"
+        },
+        {
+          "text": "e ai"
+        },
+        {
+          "text": "eaí"
+        },
+        {
+          "text": "fala meu mano"
+        },
+        {
+          "text": "mano"
+        },
+        {
+          "text": "meu"
+        },
+        {
+          "text": "oi"
+        },
+        {
+          "text": "oie"
+        },
+        {
+          "text": "oiie"
+        },
+        {
+          "text": "oiiii"
+        },
+        {
+          "text": "oiiiie"
+        },
+        {
+          "text": "oiiiiieeeee"
+        },
+        {
+          "text": "olá"
+        },
+        {
+          "text": "olar"
+        },
+        {
+          "text": "truta"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "brincadeiras",
+      "examples": [
+        {
+          "text": "brincadeira"
+        },
+        {
+          "text": "brincadeira favorita"
+        },
+        {
+          "text": "brincadeiras"
+        },
+        {
+          "text": "brincadeiras de crianca"
+        },
+        {
+          "text": "do que você gostava de brincar?"
+        },
+        {
+          "text": "gostava de brincar de que?"
+        },
+        {
+          "text": "jogo"
+        },
+        {
+          "text": "jogo favorito"
+        },
+        {
+          "text": "jogos"
+        },
+        {
+          "text": "travessuras"
+        },
+        {
+          "text": "travessuras de criança"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "broncas",
+      "examples": [
+        {
+          "text": "brigavam muito com você?"
+        },
+        {
+          "text": "bronca"
+        },
+        {
+          "text": "castigo"
+        },
+        {
+          "text": "esporro"
+        },
+        {
+          "text": "fez alguma coisa errada?"
+        },
+        {
+          "text": "ficava muito de castigo?"
+        },
+        {
+          "text": "levava muita bronca?"
+        },
+        {
+          "text": "maior bronca que levou?"
+        },
+        {
+          "text": "pior castigo que seus pais lhe deram?"
+        },
+        {
+          "text": "seus pais te deixavam de castigo?"
+        },
+        {
+          "text": "te punham de castigo?"
+        },
+        {
+          "text": "tomava muita bronca?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "cidade-natal",
+      "examples": [
+        {
+          "text": "cidade de origem"
+        },
+        {
+          "text": "cidade natal"
+        },
+        {
+          "text": "de onde você veio?"
+        },
+        {
+          "text": "foi criado onde?"
+        },
+        {
+          "text": "local de nascimento"
+        },
+        {
+          "text": "mora onde?"
+        },
+        {
+          "text": "morava onde?"
+        },
+        {
+          "text": "nascimento"
+        },
+        {
+          "text": "onde nasceu?"
+        },
+        {
+          "text": "onde você mora?"
+        },
+        {
+          "text": "onde você morava?"
+        },
+        {
+          "text": "onde você vive?"
+        },
+        {
+          "text": "onde você vivia?"
+        },
+        {
+          "text": "qual é seu local de criação?"
+        },
+        {
+          "text": "qual é seu local de nascimento?"
+        },
+        {
+          "text": "vive onde?"
+        },
+        {
+          "text": "vivia onde?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "cinema",
+      "examples": [
+        {
+          "text": "cinema"
+        },
+        {
+          "text": "costumava ir ao cinema?"
+        },
+        {
+          "text": "frequentava cinema?"
+        },
+        {
+          "text": "gosta de cinema?"
+        },
+        {
+          "text": "gosta de ir ao cinema?"
+        },
+        {
+          "text": "ia muito ao cinema?"
+        },
+        {
+          "text": "primeira vez no cinema?"
+        },
+        {
+          "text": "qual foi seu primeiro filme no cinema?"
+        },
+        {
+          "text": "vai ao cinema?"
+        },
+        {
+          "text": "via filmes no cinema?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "educacao",
+      "examples": [
+        {
+          "text": "é formado em que?"
+        },
+        {
+          "text": "estudante"
+        },
+        {
+          "text": "estudou o que?"
+        },
+        {
+          "text": "fez curso de que na faculdade?"
+        },
+        {
+          "text": "fez faculdade?"
+        },
+        {
+          "text": "nível de instrução"
+        },
+        {
+          "text": "onde estudou?"
+        },
+        {
+          "text": "onde você estudou?"
+        },
+        {
+          "text": "o que cursou na faculdade?"
+        },
+        {
+          "text": "o que estuda"
+        },
+        {
+          "text": "qual é seu nível de instrução?"
+        },
+        {
+          "text": "qual foi sua educação?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "filhos",
+      "examples": [
+        {
+          "text": "filha"
+        },
+        {
+          "text": "filhas"
+        },
+        {
+          "text": "filho"
+        },
+        {
+          "text": "filhos"
+        },
+        {
+          "text": "gosta de seus filhos?"
+        },
+        {
+          "text": "gosta dos filhos?"
+        },
+        {
+          "text": "quantos filhos você tem?"
+        },
+        {
+          "text": "tem filhas?"
+        },
+        {
+          "text": "tem filhos?"
+        },
+        {
+          "text": "tem muitos filhos?"
+        },
+        {
+          "text": "teve filhos?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "filmes",
+      "examples": [
+        {
+          "text": "assistiu algum filme"
+        },
+        {
+          "text": "filme favorito"
+        },
+        {
+          "text": "filme preferido"
+        },
+        {
+          "text": "filme que mais gosta"
+        },
+        {
+          "text": "filmes?"
+        },
+        {
+          "text": "qual é o filme que você mais gosta?"
+        },
+        {
+          "text": "qual é seu filme preferido?"
+        },
+        {
+          "text": "qual foi o filme que você mais gostou?"
+        },
+        {
+          "text": "tem algum filme preferido?"
+        },
+        {
+          "text": "tem um filme favorito?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "gostos",
+      "examples": [
+        {
+          "text": "curte fazer o que?"
+        },
+        {
+          "text": "hobby"
+        },
+        {
+          "text": "o que curte fazer?"
+        },
+        {
+          "text": "o que faz para matar o tempo?"
+        },
+        {
+          "text": "o que faz para passar o tempo?"
+        },
+        {
+          "text": "o que faz para se divertir?"
+        },
+        {
+          "text": "o que gosta de fazer?"
+        },
+        {
+          "text": "o que você gosta de fazer para passar o tempo?"
+        },
+        {
+          "text": "qual é seu hobby?"
+        },
+        {
+          "text": "qual é seu passatempo favorito?"
+        },
+        {
+          "text": "qual é seu passatempo preferido?"
+        },
+        {
+          "text": "tem algum hobby?"
+        },
+        {
+          "text": "tem algum passatempo?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "idade-ano-nascimento",
+      "examples": [
+        {
+          "text": "ano de nascimento"
+        },
+        {
+          "text": "anos de vida"
+        },
+        {
+          "text": "de que ano você é?"
+        },
+        {
+          "text": "em qual ano você nasceu?"
+        },
+        {
+          "text": "em que ano você nasceu?"
+        },
+        {
+          "text": "idade"
+        },
+        {
+          "text": "nasceu em que ano?"
+        },
+        {
+          "text": "qual é sua idade?"
+        },
+        {
+          "text": "quando você nasceu?"
+        },
+        {
+          "text": "quantos anos você tem?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "infancia",
+      "examples": [
+        {
+          "text": "adolescencia"
+        },
+        {
+          "text": "adolescência"
+        },
+        {
+          "text": "adolescente"
+        },
+        {
+          "text": "crianca"
+        },
+        {
+          "text": "criança"
+        },
+        {
+          "text": "infancia"
+        },
+        {
+          "text": "infância"
+        },
+        {
+          "text": "jovem"
+        },
+        {
+          "text": "juventude"
+        },
+        {
+          "text": "mocidade"
+        },
+        {
+          "text": "quando era menor"
+        },
+        {
+          "text": "quando você era menor"
+        },
+        {
+          "text": "quando você era pequeno"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "introducao",
+      "examples": [
+        {
+          "text": "apresentação"
+        },
+        {
+          "text": "apresente-se"
+        },
+        {
+          "text": "como se chama?"
+        },
+        {
+          "text": "conte-me mais sobre quem você é"
+        },
+        {
+          "text": "fale-me de você"
+        },
+        {
+          "text": "me conta mais sobre você"
+        },
+        {
+          "text": "me conte um pouco sobre você"
+        },
+        {
+          "text": "pode se apresentar para mim?"
+        },
+        {
+          "text": "pode se introduzir para mim?"
+        },
+        {
+          "text": "qual é seu nome?"
+        },
+        {
+          "text": "qual sua história"
+        },
+        {
+          "text": "quem é você?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "musicas",
+      "examples": [
+        {
+          "text": "canção favorita"
+        },
+        {
+          "text": "canção marcante"
+        },
+        {
+          "text": "curte algum som?"
+        },
+        {
+          "text": "de que tipo de música você gosta?"
+        },
+        {
+          "text": "estilo musical"
+        },
+        {
+          "text": "estilo musical favorito"
+        },
+        {
+          "text": "estilo musical preferido"
+        },
+        {
+          "text": "gosta de ouvir o que?"
+        },
+        {
+          "text": "gosta de qual tipo de música?"
+        },
+        {
+          "text": "gosto musical"
+        },
+        {
+          "text": "musica favorita"
+        },
+        {
+          "text": "música favorita?"
+        },
+        {
+          "text": "quais musicas gosta?"
+        },
+        {
+          "text": "qual música te marcou?"
+        },
+        {
+          "text": "que tipo de música você curte?"
+        },
+        {
+          "text": "tem alguma música que marcou sua vida?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "pais",
+      "examples": [
+        {
+          "text": "como eram seus pais?"
+        },
+        {
+          "text": "como era seu pai?"
+        },
+        {
+          "text": "como era sua mãe?"
+        },
+        {
+          "text": "conheceu seus pais?"
+        },
+        {
+          "text": "o que seus pais faziam?"
+        },
+        {
+          "text": "quem eram seus pais?"
+        },
+        {
+          "text": "quem era seu pai?"
+        },
+        {
+          "text": "quem era sua mãe?"
+        },
+        {
+          "text": "quem te criou?"
+        },
+        {
+          "text": "teve um pai?"
+        },
+        {
+          "text": "tinha mãe?"
+        },
+        {
+          "text": "tinha pais?"
+        },
+        {
+          "text": "tinha um pai?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "profissao",
+      "examples": [
+        {
+          "text": "com que você trabalhava?"
+        },
+        {
+          "text": "emprego"
+        },
+        {
+          "text": "no que trabalha?"
+        },
+        {
+          "text": "o que faz da vida"
+        },
+        {
+          "text": "o que faz da vida?"
+        },
+        {
+          "text": "o que faz para viver?"
+        },
+        {
+          "text": "qual é seu emprego?"
+        },
+        {
+          "text": "qual é sua profissão?"
+        },
+        {
+          "text": "tem um emprego?"
+        },
+        {
+          "text": "trabalha com que?"
+        },
+        {
+          "text": "trabalha de que?"
+        },
+        {
+          "text": "trabalho"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "saudacao",
+      "examples": [
+        {
+          "text": "Como anda?"
+        },
+        {
+          "text": "Como vai?"
+        },
+        {
+          "text": "Como vai você?"
+        },
+        {
+          "text": "Como você está?"
+        },
+        {
+          "text": "Em paz?"
+        },
+        {
+          "text": "Está bem?"
+        },
+        {
+          "text": "Tudo bem?"
+        },
+        {
+          "text": "Tudo bem com você?"
+        },
+        {
+          "text": "Tudo bem contigo?"
+        },
+        {
+          "text": "Tudo indo?"
+        },
+        {
+          "text": "Tudo indo bem?"
+        },
+        {
+          "text": "Tudo na paz?"
+        },
+        {
+          "text": "Você está bem?"
+        }
+      ],
+      "description": ""
+    }
+  ],
+  "entities": [],
+  "metadata": {
+    "api_version": {
+      "major_version": "v2",
+      "minor_version": "2018-11-08"
+    }
+  },
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "title": "Anything else",
+      "output": {
+        "text": {
+          "values": [
+            "1"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "conditions": "anything_else",
+      "dialog_node": "Anything else",
+      "previous_sibling": "node_1_1592607867594"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "15"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#musicas",
+      "dialog_node": "node_10_1592607849496",
+      "previous_sibling": "node_9_1592607834390"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "16"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#filmes",
+      "dialog_node": "node_1_1592607867594",
+      "previous_sibling": "node_10_1592607849496"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "9"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#educacao",
+      "dialog_node": "node_3_1592607594994",
+      "previous_sibling": "node_4_1592607578074"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "12"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#idade-ano-nascimento",
+      "dialog_node": "node_3_1592607636626",
+      "previous_sibling": "node_6_1603909508987"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "6"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#broncas",
+      "dialog_node": "node_4_1592607542464",
+      "previous_sibling": "node_9_1592606154100"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "8"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#cidade-natal",
+      "dialog_node": "node_4_1592607578074",
+      "previous_sibling": "node_5_1592607557943"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "7"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#infancia",
+      "dialog_node": "node_5_1592607557943",
+      "previous_sibling": "node_4_1592607542464"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "10"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#gostos",
+      "dialog_node": "node_5_1592607614434",
+      "previous_sibling": "node_3_1592607594994"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "11"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#filhos",
+      "dialog_node": "node_6_1603909508987",
+      "previous_sibling": "node_5_1592607614434"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "13"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#pais",
+      "dialog_node": "node_7_1592607817888",
+      "previous_sibling": "node_3_1592607636626"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "3"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#saudacao",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_8_1592608799217",
+      "previous_sibling": "Welcome"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "5"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#brincadeiras",
+      "dialog_node": "node_9_1592606154100",
+      "previous_sibling": "node_9_1592609006854"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "14"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#profissao",
+      "dialog_node": "node_9_1592607834390",
+      "previous_sibling": "node_7_1592607817888"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "4"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#introducao",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_9_1592609006854",
+      "previous_sibling": "node_8_1592608799217"
+    },
+    {
+      "type": "standard",
+      "title": "Welcome",
+      "output": {
+        "text": {
+          "values": [
+            "2"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "conditions": "welcome || #boas-vindas",
+      "dialog_node": "Welcome"
+    }
+  ],
+  "counterexamples": [
+    {
+      "text": "qual"
+    }
+  ],
+  "system_settings": {},
+  "learning_opt_out": false,
+  "name": "Museu da Pessoa - Skill",
+  "language": "pt-br",
+  "description": ""
+}
