@@ -37,6 +37,24 @@ CREATE TABLE assunto (
   UNIQUE KEY nome_UN (nome)
 );
 
+INSERT INTO assunto (id, nome, criacao) VALUES
+(1, 'Assunto Desconhecido', now()),
+(2, 'Boas vindas', now()),
+(3, 'Saudação', now()),
+(4, 'Introdução', now()),
+(5, 'Brincadeiras', now()),
+(6, 'Broncas', now()),
+(7, 'Infância', now()),
+(8, 'Cidade Natal', now()),
+(9, 'Educação', now()),
+(10, 'Gostos', now()),
+(11, 'Filhos', now()),
+(12, 'Idade / Ano de Nascimento', now()),
+(13, 'Pais', now()),
+(14, 'Profissão', now()),
+(15, 'Músicas', now()),
+(16, 'Filmes', now());
+
 -- DROP TABLE IF EXISTS pessoa;
 CREATE TABLE pessoa (
   id int NOT NULL AUTO_INCREMENT,
@@ -60,5 +78,5 @@ CREATE TABLE resposta (
   UNIQUE KEY idpessoaidassunto_UN (idpessoa, idassunto),
   KEY idassunto_FK_idx (idassunto),
   CONSTRAINT idpessoa_FK FOREIGN KEY (idpessoa) REFERENCES pessoa (id) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT idassunto_FK FOREIGN KEY (idassunto) REFERENCES assunto (id) ON DELETE CASCADE ON UPDATE RESTRICT
+  CONSTRAINT idassunto_FK FOREIGN KEY (idassunto) REFERENCES assunto (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

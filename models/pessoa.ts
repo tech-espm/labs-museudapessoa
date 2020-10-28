@@ -66,7 +66,7 @@ export = class Pessoa {
 			await sql.beginTransaction();
 
 			try {
-				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao) values (?, ?, now())", [p.nome, p.nomeajustado, p.feminino]);
+				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao) values (?, ?, ?, now())", [p.nome, p.nomeajustado, p.feminino]);
 				p.id = await sql.scalar("select last_insert_id()") as number;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY") {
