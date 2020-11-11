@@ -4,13 +4,13 @@ import SqlPool = require("./sqlPool");
 export = class Sql {
 	// https://www.npmjs.com/package/mysql
 
-	private connection;
+	private connection: any;
 	private transacaoAberta: boolean;
 	public linhasAfetadas: number;
 
-	public static async conectar(callback: (sql: Sql) => Promise<void>): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			SqlPool.pool.getConnection((error, connection) => {
+	public static async conectar<T>(callback: (sql: Sql) => Promise<T>): Promise<T> {
+		return new Promise<T>((resolve, reject) => {
+			SqlPool.pool.getConnection((error: any, connection: any) => {
 				if (error) {
 					reject(error);
 					return;
@@ -22,24 +22,24 @@ export = class Sql {
 				sql.linhasAfetadas = 0;
 				try {
 					callback(sql)
-						.then(() => {
+						.then((value: T) => {
 							if (sql.transacaoAberta) {
 								sql.transacaoAberta = false;
-								connection.rollback(error => {
+								connection.rollback((error: any) => {
 									connection.release();
 									if (error)
 										reject(error);
 									else
-										resolve();
+										resolve(value);
 								});
 							} else {
 								connection.release();
-								resolve();
+								resolve(value);
 							}
 						}, reason => {
 							if (sql.transacaoAberta) {
 								sql.transacaoAberta = false;
-								connection.rollback(error => {
+								connection.rollback((error: any) => {
 									connection.release();
 									if (error)
 										reject(error);
@@ -72,7 +72,7 @@ export = class Sql {
 
 	public async query(queryStr: string, valores: any[] = null): Promise<any[]> {
 		return new Promise<any[]>((resolve, reject) => {
-			let terminar = (error, results, fields) => {
+			let terminar = (error: any, results: any, fields: any) => {
 				if (error) {
 					reject(error);
 					return;
@@ -92,7 +92,7 @@ export = class Sql {
 
 	public async scalar(queryStr: string, valores: any[] = null): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
-			let terminar = (error, results, fields) => {
+			let terminar = (error: any, results: any, fields: any) => {
 				if (error) {
 					reject(error);
 					return;
@@ -100,7 +100,7 @@ export = class Sql {
 
 				this.linhasAfetadas = parseInt(results.affectedRows);
 
-				let r;
+				let r: any;
 
 				if (!results || !(r = results[0]))
 					resolve(null);
@@ -127,7 +127,7 @@ export = class Sql {
 				return;
 			}
 
-			this.connection.beginTransaction(error => {
+			this.connection.beginTransaction((error: any) => {
 				if (error) {
 					reject(error);
 					return;
@@ -145,7 +145,7 @@ export = class Sql {
 				return;
 			}
 
-			this.connection.commit(error => {
+			this.connection.commit((error: any) => {
 				if (error) {
 					reject(error);
 					return;
@@ -163,7 +163,7 @@ export = class Sql {
 				return;
 			}
 
-			this.connection.rollback(error => {
+			this.connection.rollback((error: any) => {
 				if (error) {
 					reject(error);
 					return;

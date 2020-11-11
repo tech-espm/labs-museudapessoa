@@ -30,8 +30,9 @@ INSERT INTO usuario (login, nome, idperfil, senha, token, criacao) VALUES ('ADMI
 
 -- DROP TABLE IF EXISTS assunto;
 CREATE TABLE assunto (
-  id int NOT NULL AUTO_INCREMENT,
+  id int NOT NULL,
   nome varchar(100) NOT NULL,
+  respostapadrao TEXT NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY nome_UN (nome)
@@ -53,7 +54,10 @@ INSERT INTO assunto (id, nome, criacao) VALUES
 (13, 'Pais', now()),
 (14, 'Profissão', now()),
 (15, 'Músicas', now()),
-(16, 'Filmes', now());
+(16, 'Filmes', now()),
+(17, 'Conte Sua História', now()),
+(18, 'Fundação do Museu', now()),
+(19, 'O que é o Museu', now());
 
 -- DROP TABLE IF EXISTS pessoa;
 CREATE TABLE pessoa (

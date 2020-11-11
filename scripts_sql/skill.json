@@ -232,6 +232,63 @@
       "description": ""
     },
     {
+      "intent": "conte-sua-historia",
+      "examples": [
+        {
+          "text": "como faço para adicionar minha história de vida ao acervo?"
+        },
+        {
+          "text": "como faço para adicionar minha história de vida ao museu?"
+        },
+        {
+          "text": "como faço para contar minha história?"
+        },
+        {
+          "text": "como faço para ser entrevistado?"
+        },
+        {
+          "text": "contar minha história"
+        },
+        {
+          "text": "contar minha história de vida"
+        },
+        {
+          "text": "é possível colocar minha história no acervo?"
+        },
+        {
+          "text": "é possível colocar minha história no museu?"
+        },
+        {
+          "text": "é possível colocar minha vida no acervo?"
+        },
+        {
+          "text": "é possível colocar minha vida no museu?"
+        },
+        {
+          "text": "gostaria de contar minha história de vida para o meuseu"
+        },
+        {
+          "text": "minha história"
+        },
+        {
+          "text": "posso contar minha história?"
+        },
+        {
+          "text": "quero contar minha história de vida"
+        },
+        {
+          "text": "quero contar minha história de vida para o museu"
+        },
+        {
+          "text": "quero fazer parte do acervo"
+        },
+        {
+          "text": "quero ser entrevistado"
+        }
+      ],
+      "description": ""
+    },
+    {
       "intent": "educacao",
       "examples": [
         {
@@ -344,6 +401,36 @@
         },
         {
           "text": "tem um filme favorito?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "fundacao-do-museu",
+      "examples": [
+        {
+          "text": "de que ano é o museu?"
+        },
+        {
+          "text": "em que ano o museu abriu?"
+        },
+        {
+          "text": "qual é a data de fundação do museu?"
+        },
+        {
+          "text": "quando o museu abriu?"
+        },
+        {
+          "text": "quando o museu foi criado?"
+        },
+        {
+          "text": "quando o museu foi fundado?"
+        },
+        {
+          "text": "quando o museu nasceu?"
+        },
+        {
+          "text": "quem fundou o museu?"
         }
       ],
       "description": ""
@@ -571,6 +658,42 @@
       "description": ""
     },
     {
+      "intent": "o-que-e-o-museu",
+      "examples": [
+        {
+          "text": "fale mais sobre o museu"
+        },
+        {
+          "text": "fale mais sobre o museu da pessoa"
+        },
+        {
+          "text": "me explica o que é o museu"
+        },
+        {
+          "text": "me explique o que é o museu da pessoa"
+        },
+        {
+          "text": "o que é o museu?"
+        },
+        {
+          "text": "o que é o museu da pessoa?"
+        },
+        {
+          "text": "o que faz o museu?"
+        },
+        {
+          "text": "para que server o museu?"
+        },
+        {
+          "text": "qual é a finalidade do museu?"
+        },
+        {
+          "text": "qual o propósito do museu?"
+        }
+      ],
+      "description": ""
+    },
+    {
       "intent": "pais",
       "examples": [
         {
@@ -724,7 +847,7 @@
       },
       "conditions": "anything_else",
       "dialog_node": "Anything else",
-      "previous_sibling": "node_1_1592607867594"
+      "previous_sibling": "node_9_1605115921388"
     },
     {
       "type": "standard",
@@ -763,6 +886,25 @@
       "conditions": "#filmes",
       "dialog_node": "node_1_1592607867594",
       "previous_sibling": "node_10_1592607849496"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "18"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#fundacao-do-museu",
+      "dialog_node": "node_2_1605115847218",
+      "previous_sibling": "node_8_1605115410781"
     },
     {
       "type": "standard",
@@ -943,6 +1085,25 @@
           {
             "values": [
               {
+                "text": "17"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#conte-sua-historia",
+      "dialog_node": "node_8_1605115410781",
+      "previous_sibling": "node_1_1592607867594"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
                 "text": "5"
               }
             ],
@@ -993,6 +1154,25 @@
       "digress_in": "does_not_return",
       "dialog_node": "node_9_1592609006854",
       "previous_sibling": "node_8_1592608799217"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "19"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#o-que-e-o-museu",
+      "dialog_node": "node_9_1605115921388",
+      "previous_sibling": "node_2_1605115847218"
     },
     {
       "type": "standard",

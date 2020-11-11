@@ -1,6 +1,5 @@
 ﻿import express = require("express");
 import wrap = require("express-async-error-wrapper");
-import jsonRes = require("../../utils/jsonRes");
 import Assunto = require("../../models/assunto");
 import Usuario = require("../../models/usuario");
 
@@ -19,34 +18,40 @@ router.get("/obter", wrap(async (req: express.Request, res: express.Response) =>
 	let u = await Usuario.cookie(req, res);
 	if (!u)
 		return;
-	let id = parseInt(req.query["id"]);
-	res.json(isNaN(id) ? null : await Assunto.obter(id));
+	res.json(await Assunto.obter(parseInt(req.query["id"])));
 }));
 
 router.post("/criar", wrap(async (req: express.Request, res: express.Response) => {
 	let u = await Usuario.cookie(req, res, true);
 	if (!u)
 		return;
-	let p = req.body as Assunto;
-	jsonRes(res, 400, p ? await Assunto.criar(p) : "Dados inválidos");
+	const r = await Assunto.criar(req.body as Assunto);
+	if (r)
+		res.status(400).json(r);
+	else
+		res.sendStatus(204);
 }));
 
 router.post("/alterar", wrap(async (req: express.Request, res: express.Response) => {
 	let u = await Usuario.cookie(req, res, true);
 	if (!u)
 		return;
-	let p = req.body as Assunto;
-	if (p)
-		p.id = parseInt(req.body.id);
-	jsonRes(res, 400, (p && !isNaN(p.id)) ? await Assunto.alterar(p) : "Dados inválidos");
+	const r = await Assunto.alterar(req.body as Assunto);
+	if (r)
+		res.status(400).json(r);
+	else
+		res.sendStatus(204);
 }));
 
 router.get("/excluir", wrap(async (req: express.Request, res: express.Response) => {
 	let u = await Usuario.cookie(req, res, true);
 	if (!u)
 		return;
-	let id = parseInt(req.query["id"]);
-	jsonRes(res, 400, isNaN(id) ? "Dados inválidos" : await Assunto.excluir(id));
+	const r = await Assunto.excluir(parseInt(req.query["id"]));
+	if (r)
+		res.status(400).json(r);
+	else
+		res.sendStatus(204);
 }));
 
 export = router;

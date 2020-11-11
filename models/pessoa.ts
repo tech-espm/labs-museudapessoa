@@ -16,14 +16,21 @@ export = class Pessoa {
 	public respostas: Resposta[];
 
 	private static validar(p: Pessoa): string {
+		if (!p)
+			return "Pessoa inválida";
+
 		p.nome = (p.nome || "").normalize().trim();
 		if (p.nome.length < 3 || p.nome.length > 100)
 			return "Nome inválido";
 		if (p.nome.indexOf("+") >= 0)
 			return "Nome não pode conter o caracter +";
+
 		p.nomeajustado = ajustarNome(p.nome);
+
+		p.feminino = parseInt(p.feminino as any);
 		if (isNaN(p.feminino) || p.feminino < 0 || p.feminino > 1)
 			p.feminino = 1;
+
 		if (!p.respostas)
 			p.respostas = [];
 		for (let i = p.respostas.length - 1; i >= 0; i--) {
@@ -34,85 +41,73 @@ export = class Pessoa {
 		return null;
 	}
 
-	public static async listar(): Promise<Pessoa[]> {
-		let lista: Pessoa[] = null;
-
-		await Sql.conectar(async (sql: Sql) => {
-			lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[];
+	public static listar(): Promise<Pessoa[]> {
+		return Sql.conectar(async (sql: Sql) => {
+			return (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[] || [];
 		});
-
-		return lista || [];
 	}
 
-	public static async obter(id: number): Promise<Pessoa> {
-		let lista: Pessoa[] = null;
+	public static obter(id: number): Promise<Pessoa> {
+		return Sql.conectar(async (sql: Sql) => {
+			const lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
 
-		await Sql.conectar(async (sql: Sql) => {
-			lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
-
-			if (lista && lista.length)
+			if (lista && lista.length) {
 				lista[0].respostas = await Resposta.listar(sql, id);
-		});
+				return lista[0];
+			}
 
-		return (lista && lista[0]) || null;
+			return null;
+		});
 	}
 
-	public static async criar(p: Pessoa): Promise<string> {
-		let res: string;
-		if ((res = Pessoa.validar(p)))
-			return res;
+	public static criar(p: Pessoa): Promise<string> {
+		const erro = Pessoa.validar(p);
+		if (erro)
+			return Promise.resolve(erro);
 
-		await Sql.conectar(async (sql: Sql) => {
+		return Sql.conectar(async (sql: Sql) => {
 			await sql.beginTransaction();
 
 			try {
 				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao) values (?, ?, ?, now())", [p.nome, p.nomeajustado, p.feminino]);
 				p.id = await sql.scalar("select last_insert_id()") as number;
 			} catch (e) {
-				if (e.code && e.code === "ER_DUP_ENTRY") {
-					res = `A pessoa ${p.nome} já existe`;
-					return;
-				} else {
-					throw e;
-				}
+				if (e.code && e.code === "ER_DUP_ENTRY")
+					return `A pessoa ${p.nome} já existe`;
+				throw e;
 			}
 
 			if (p.respostas) {
                 for (let i = 0; i < p.respostas.length; i++) {
                     p.respostas[i].idpessoa = p.id;
-					res = await Resposta.criar(sql, p.respostas[i]);
-					if (res)
-						return;
+					const erro = await Resposta.criar(sql, p.respostas[i]);
+					if (erro)
+						return erro;
                 }
             }
 
 			await sql.commit();
-		});
 
-		return res;
+			return null;
+		});
 	}
 
-	public static async alterar(p: Pessoa): Promise<string> {
-		let res: string;
-		if ((res = Pessoa.validar(p)))
-			return res;
+	public static alterar(p: Pessoa): Promise<string> {
+		const erro = Pessoa.validar(p);
+		if (erro)
+			return Promise.resolve(erro);
 
-		await Sql.conectar(async (sql: Sql) => {
+		return Sql.conectar(async (sql: Sql) => {
 			await sql.beginTransaction();
 
 			try {
 				await sql.query("update pessoa set nome = ?, nomeajustado = ?, feminino = ? where id = ?", [p.nome, p.nomeajustado, p.feminino, p.id]);
-				if (!sql.linhasAfetadas) {
-					res = "Pessoa não encontrada";
-					return;
-				}
+				if (!sql.linhasAfetadas)
+					return "Pessoa não encontrada";
 			} catch (e) {
-				if (e.code && e.code === "ER_DUP_ENTRY") {
-					res = `A pessoa ${p.nome} já existe`;
-					return;
-				} else {
-					throw e;
-				}
+				if (e.code && e.code === "ER_DUP_ENTRY")
+					return `A pessoa ${p.nome} já existe`;
+				throw e;
 			}
 
 			const respostasExistentes = await sql.query("SELECT id FROM resposta WHERE idpessoa = ?", [p.id]) as Resposta[];
@@ -126,9 +121,9 @@ export = class Pessoa {
                 for (let n = 0; n < respostasNovas.length; n++) {
                     if (idExistente === respostasNovas[n].id) {
                         respostasNovas[n].idpessoa = p.id;
-						res = await Resposta.alterar(sql, respostasNovas[n]);
-						if (res)
-							return;
+						const erro = await Resposta.alterar(sql, respostasNovas[n]);
+						if (erro)
+							return erro;
                         respostasExistentes.splice(e, 1);
                         e--;
                         respostasNovas.splice(n, 1);
@@ -144,26 +139,22 @@ export = class Pessoa {
             // Cria as respostas novas
             for (let i = 0; i < respostasNovas.length; i++) {
                 respostasNovas[i].idpessoa = p.id;
-				res = await Resposta.criar(sql, respostasNovas[i]);
-				if (res)
-					return;
+				const erro = await Resposta.criar(sql, respostasNovas[i]);
+				if (erro)
+					return erro;
             }
 
 			await sql.commit();
-		});
 
-		return res;
+			return null;
+		});
 	}
 
-	public static async excluir(id: number): Promise<string> {
-		let res: string = null;
-
-		await Sql.conectar(async (sql: Sql) => {
+	public static excluir(id: number): Promise<string> {
+		return Sql.conectar(async (sql: Sql) => {
 			await sql.query("delete from pessoa where id = ?", [id]);
-			res = sql.linhasAfetadas.toString();
+			return (sql.linhasAfetadas ? null : "Pessoa não encontrada");
 		});
-
-		return res;
 	}
 
 	public static async iniciarConversa(nomepessoa: string): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
@@ -236,17 +227,14 @@ export = class Pessoa {
 			sessionId: idconversa,
 			input: { message_type: "text", text: mensagem }
 		});
-		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || "");
-		const respostaInt = parseInt(resposta);
+		const resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || ""),
+			respostaInt = parseInt(resposta);
 		if (resposta && isNaN(respostaInt))
 			return resposta;
 
-		if (!isNaN(respostaInt)) {
-			await Sql.conectar(async (sql: Sql) => {
-				resposta = await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]);
-			});
-		}
-
-		return resposta || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊";
+		return ((!isNaN(respostaInt) && await Sql.conectar(async (sql: Sql) => {
+			return (await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]) ||
+				await sql.scalar("select respostapadrao from assunto where id = ?", [respostaInt]));
+		})) || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊");
 	}
 };
