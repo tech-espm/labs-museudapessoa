@@ -234,7 +234,9 @@ export = class Pessoa {
 
 		return ((!isNaN(respostaInt) && await Sql.conectar(async (sql: Sql) => {
 			return (await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]) ||
-				await sql.scalar("select respostapadrao from assunto where id = ?", [respostaInt]));
+				await sql.scalar("select respostapadrao from assunto where id = ?", [respostaInt]) ||
+				await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = 1", [idpessoa]) ||
+				await sql.scalar("select respostapadrao from assunto where id = 1"));
 		})) || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊");
 	}
 };

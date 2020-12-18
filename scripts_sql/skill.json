@@ -1,6 +1,129 @@
 {
   "intents": [
     {
+      "intent": "ajuda",
+      "examples": [
+        {
+          "text": "Ajuda"
+        },
+        {
+          "text": "Assuntos"
+        },
+        {
+          "text": "Como faço para conversar com você?"
+        },
+        {
+          "text": "Consegue me ajudar?"
+        },
+        {
+          "text": "Consegue me ajudar, por favor?"
+        },
+        {
+          "text": "Estou perdida"
+        },
+        {
+          "text": "Estou perdido"
+        },
+        {
+          "text": "O que eu faço?"
+        },
+        {
+          "text": "O que eu preciso fazer?"
+        },
+        {
+          "text": "O que você sabe?"
+        },
+        {
+          "text": "Por onde eu começo?"
+        },
+        {
+          "text": "Preciso de ajuda"
+        },
+        {
+          "text": "Sobre o que você sabe falar?"
+        },
+        {
+          "text": "Sobre quais assuntos você é capaz de falar?"
+        },
+        {
+          "text": "Socorro"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "apoio-ao-museu",
+      "examples": [
+        {
+          "text": "apoio"
+        },
+        {
+          "text": "como ajudar o museu?"
+        },
+        {
+          "text": "como apoiar o museu?"
+        },
+        {
+          "text": "como faço para ajudar o museu?"
+        },
+        {
+          "text": "como faço para doar?"
+        },
+        {
+          "text": "como faço para ser voluntário?"
+        },
+        {
+          "text": "como fazer uma doação?"
+        },
+        {
+          "text": "como faz para ser voluntário?"
+        },
+        {
+          "text": "consigo ajudar o museu?"
+        },
+        {
+          "text": "doação"
+        },
+        {
+          "text": "o museu aceita voluntários?"
+        },
+        {
+          "text": "o museu tem programa de voluntariado?"
+        },
+        {
+          "text": "posso apoiar o museu?"
+        },
+        {
+          "text": "posso ser voluntário do museu?"
+        },
+        {
+          "text": "quero ajudar o museu"
+        },
+        {
+          "text": "quero doar"
+        },
+        {
+          "text": "quero ser voluntário"
+        },
+        {
+          "text": "quero ser voluntário do museu"
+        },
+        {
+          "text": "tem vaga para o voluntariado?"
+        },
+        {
+          "text": "tem vaga para voluntários?"
+        },
+        {
+          "text": "voluntariado"
+        },
+        {
+          "text": "voluntário"
+        }
+      ],
+      "description": ""
+    },
+    {
       "intent": "boas-vindas",
       "examples": [
         {
@@ -196,37 +319,61 @@
       "description": ""
     },
     {
-      "intent": "cinema",
+      "intent": "contato",
       "examples": [
         {
-          "text": "cinema"
+          "text": "como entrar em contato com o museu?"
         },
         {
-          "text": "costumava ir ao cinema?"
+          "text": "como entro em contato com o museu?"
         },
         {
-          "text": "frequentava cinema?"
+          "text": "como eu chego ao museu?"
         },
         {
-          "text": "gosta de cinema?"
+          "text": "como faço para falar com o museu?"
         },
         {
-          "text": "gosta de ir ao cinema?"
+          "text": "como falar com o museu?"
         },
         {
-          "text": "ia muito ao cinema?"
+          "text": "como tirar dúvidas com o museu?"
         },
         {
-          "text": "primeira vez no cinema?"
+          "text": "como visitar o museu?"
         },
         {
-          "text": "qual foi seu primeiro filme no cinema?"
+          "text": "contato"
         },
         {
-          "text": "vai ao cinema?"
+          "text": "o museu tem sede física?"
         },
         {
-          "text": "via filmes no cinema?"
+          "text": "onde fica o museu?"
+        },
+        {
+          "text": "qual é o contato do museu?"
+        },
+        {
+          "text": "qual é o e-mail do museu?"
+        },
+        {
+          "text": "qual é o endereço do museu?"
+        },
+        {
+          "text": "qual é o site do museu?"
+        },
+        {
+          "text": "quero falar com o museu"
+        },
+        {
+          "text": "quero visitar o museu"
+        },
+        {
+          "text": "site"
+        },
+        {
+          "text": "visita"
         }
       ],
       "description": ""
@@ -667,10 +814,19 @@
           "text": "fale mais sobre o museu da pessoa"
         },
         {
+          "text": "me conte mais sobre a missão do museu da pessoa"
+        },
+        {
           "text": "me explica o que é o museu"
         },
         {
           "text": "me explique o que é o museu da pessoa"
+        },
+        {
+          "text": "missão do museu"
+        },
+        {
+          "text": "objetivo do museu"
         },
         {
           "text": "o que é o museu?"
@@ -682,13 +838,55 @@
           "text": "o que faz o museu?"
         },
         {
-          "text": "para que server o museu?"
+          "text": "para que serve o museu?"
+        },
+        {
+          "text": "por que existe o museu da pessoa?"
         },
         {
           "text": "qual é a finalidade do museu?"
         },
         {
+          "text": "qual é a missão do museu?"
+        },
+        {
           "text": "qual o propósito do museu?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "origem-nome",
+      "examples": [
+        {
+          "text": "de onde vem seu nome?"
+        },
+        {
+          "text": "o que quer dizer seu nome?"
+        },
+        {
+          "text": "o que seu nome quer dizer?"
+        },
+        {
+          "text": "o que seu nome significa?"
+        },
+        {
+          "text": "o que significa seu nome?"
+        },
+        {
+          "text": "origem do seu nome"
+        },
+        {
+          "text": "qual é a origem do seu nome?"
+        },
+        {
+          "text": "seu nome tem alguma origem?"
+        },
+        {
+          "text": "seu nome tem algum significado?"
+        },
+        {
+          "text": "significado do seu nome"
         }
       ],
       "description": ""
@@ -781,6 +979,177 @@
       "description": ""
     },
     {
+      "intent": "programacao-museu",
+      "examples": [
+        {
+          "text": "atividades do museu"
+        },
+        {
+          "text": "calendário de atividades do museu"
+        },
+        {
+          "text": "calendário de atividades do museu da pessoa"
+        },
+        {
+          "text": "calendário do museu"
+        },
+        {
+          "text": "calendário do museu da pessoa"
+        },
+        {
+          "text": "pode me informar a programação do museu"
+        },
+        {
+          "text": "programação do museu"
+        },
+        {
+          "text": "programação do museu da pessoa"
+        },
+        {
+          "text": "quais são as atividades do museu?"
+        },
+        {
+          "text": "quais são as atividades do museu da pessoa?"
+        },
+        {
+          "text": "qual é a programação?"
+        },
+        {
+          "text": "qual é a programação do museu?"
+        },
+        {
+          "text": "qual é a programação do museu da pessoa?"
+        },
+        {
+          "text": "qual é o calendário do museu?"
+        },
+        {
+          "text": "qual é o calendário do museu da pessoa?"
+        },
+        {
+          "text": "quero ver a programação do museu da pessoa"
+        },
+        {
+          "text": "quero ver o calendário do museu"
+        },
+        {
+          "text": "quero ver o calendário do museu da pessoa"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "quantidade-historias-museus",
+      "examples": [
+        {
+          "text": "acervo de histórias de vida do museu"
+        },
+        {
+          "text": "acervo de histórias do museu"
+        },
+        {
+          "text": "acervo do museu"
+        },
+        {
+          "text": "histórias de vida do museu"
+        },
+        {
+          "text": "o museu tem muitas histórias de vida?"
+        },
+        {
+          "text": "qual é a quantidade de histórias de vida do museu?"
+        },
+        {
+          "text": "qual é a quantidade de histórias do museu?"
+        },
+        {
+          "text": "qual é o acervo de histórias de vida do museu?"
+        },
+        {
+          "text": "qual é o acervo de histórias do museu?"
+        },
+        {
+          "text": "qual é o tamanho do acervo de histórias de vida do museu?"
+        },
+        {
+          "text": "qual é o tamanho do acervo de histórias do museu?"
+        },
+        {
+          "text": "quantas histórias de vida tem o museu?"
+        },
+        {
+          "text": "quantas histórias tem o museu?"
+        },
+        {
+          "text": "quantidade de histórias do museu"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "redes-sociais-museu",
+      "examples": [
+        {
+          "text": "facebook do museu"
+        },
+        {
+          "text": "instagram do museu"
+        },
+        {
+          "text": "linkedin do museu"
+        },
+        {
+          "text": "o museu está nas redes sociais?"
+        },
+        {
+          "text": "o museu tem facebook?"
+        },
+        {
+          "text": "o museu tem instagram?"
+        },
+        {
+          "text": "o museu tem linkedin?"
+        },
+        {
+          "text": "o museu tem redes sociais?"
+        },
+        {
+          "text": "o museu tem twitter?"
+        },
+        {
+          "text": "o museu tem youtube?"
+        },
+        {
+          "text": "quais são as redes sociais do museu?"
+        },
+        {
+          "text": "qual é o facebook do museu?"
+        },
+        {
+          "text": "qual é o instagram do museu?"
+        },
+        {
+          "text": "qual é o linkedin do museu?"
+        },
+        {
+          "text": "qual é o twitter do museu?"
+        },
+        {
+          "text": "qual é o youtube do museu?"
+        },
+        {
+          "text": "redes sociais do museu"
+        },
+        {
+          "text": "twitter do museu"
+        },
+        {
+          "text": "youtube do museu"
+        }
+      ],
+      "description": ""
+    },
+    {
       "intent": "saudacao",
       "examples": [
         {
@@ -836,7 +1205,7 @@
   "dialog_nodes": [
     {
       "type": "standard",
-      "title": "Anything else",
+      "title": "anything else / 1",
       "output": {
         "text": {
           "values": [
@@ -847,10 +1216,11 @@
       },
       "conditions": "anything_else",
       "dialog_node": "Anything else",
-      "previous_sibling": "node_9_1605115921388"
+      "previous_sibling": "node_10_1608314057471"
     },
     {
       "type": "standard",
+      "title": "15",
       "output": {
         "generic": [
           {
@@ -870,6 +1240,47 @@
     },
     {
       "type": "standard",
+      "title": "23",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "23"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#quantidade-historias-museus",
+      "dialog_node": "node_10_1608306849858",
+      "previous_sibling": "node_1_1607393404578"
+    },
+    {
+      "type": "standard",
+      "title": "26",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "26"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#origem-nome",
+      "dialog_node": "node_10_1608314057471",
+      "previous_sibling": "node_4_1608307455155"
+    },
+    {
+      "type": "standard",
+      "title": "16",
       "output": {
         "generic": [
           {
@@ -889,6 +1300,27 @@
     },
     {
       "type": "standard",
+      "title": "22",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "22"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#contato",
+      "dialog_node": "node_1_1607393404578",
+      "previous_sibling": "node_4_1607392735622"
+    },
+    {
+      "type": "standard",
+      "title": "18",
       "output": {
         "generic": [
           {
@@ -908,6 +1340,7 @@
     },
     {
       "type": "standard",
+      "title": "9",
       "output": {
         "generic": [
           {
@@ -927,6 +1360,7 @@
     },
     {
       "type": "standard",
+      "title": "12",
       "output": {
         "generic": [
           {
@@ -946,6 +1380,7 @@
     },
     {
       "type": "standard",
+      "title": "6",
       "output": {
         "generic": [
           {
@@ -965,6 +1400,7 @@
     },
     {
       "type": "standard",
+      "title": "8",
       "output": {
         "generic": [
           {
@@ -984,6 +1420,48 @@
     },
     {
       "type": "standard",
+      "title": "21",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "21"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#apoio-ao-museu",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_4_1607392735622",
+      "previous_sibling": "node_6_1607391137820"
+    },
+    {
+      "type": "standard",
+      "title": "25",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "25"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#redes-sociais-museu",
+      "dialog_node": "node_4_1608307455155",
+      "previous_sibling": "node_7_1608307121807"
+    },
+    {
+      "type": "standard",
+      "title": "7",
       "output": {
         "generic": [
           {
@@ -1003,6 +1481,7 @@
     },
     {
       "type": "standard",
+      "title": "10",
       "output": {
         "generic": [
           {
@@ -1022,6 +1501,7 @@
     },
     {
       "type": "standard",
+      "title": "11",
       "output": {
         "generic": [
           {
@@ -1041,6 +1521,27 @@
     },
     {
       "type": "standard",
+      "title": "20",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "20"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#ajuda",
+      "dialog_node": "node_6_1607391137820",
+      "previous_sibling": "node_9_1605115921388"
+    },
+    {
+      "type": "standard",
+      "title": "13",
       "output": {
         "generic": [
           {
@@ -1060,6 +1561,27 @@
     },
     {
       "type": "standard",
+      "title": "24",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "24"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#programacao-museu",
+      "dialog_node": "node_7_1608307121807",
+      "previous_sibling": "node_10_1608306849858"
+    },
+    {
+      "type": "standard",
+      "title": "3",
       "output": {
         "generic": [
           {
@@ -1080,6 +1602,7 @@
     },
     {
       "type": "standard",
+      "title": "17",
       "output": {
         "generic": [
           {
@@ -1099,6 +1622,7 @@
     },
     {
       "type": "standard",
+      "title": "5",
       "output": {
         "generic": [
           {
@@ -1118,6 +1642,7 @@
     },
     {
       "type": "standard",
+      "title": "14",
       "output": {
         "generic": [
           {
@@ -1137,6 +1662,7 @@
     },
     {
       "type": "standard",
+      "title": "4",
       "output": {
         "generic": [
           {
@@ -1157,6 +1683,7 @@
     },
     {
       "type": "standard",
+      "title": "19",
       "output": {
         "generic": [
           {
@@ -1176,7 +1703,7 @@
     },
     {
       "type": "standard",
-      "title": "Welcome",
+      "title": "welcome / 2",
       "output": {
         "text": {
           "values": [
