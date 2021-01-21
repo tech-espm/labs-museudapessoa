@@ -1,14 +1,17 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2017",
-    "lib": ["es2017", "DOM"],
-    "sourceMap": true
-  },
-  "exclude": [
-    "node_modules",
-    "public",
-    "scripts_sql",
-    "views"
-  ]
+	"compilerOptions": {
+		"module": "CommonJS",
+		"target": "ES2017",
+		"lib": ["ES2017", "DOM"],
+		"outDir": "src",
+		"sourceMap": true,
+		"experimentalDecorators": true
+	},
+	"exclude": [
+		"node_modules",
+		"public",
+		"src",
+		"scripts_sql",
+		"views"
+	]
 }

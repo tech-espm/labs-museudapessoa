@@ -2,8 +2,8 @@
 // acrescentar a lib DOM ao array compilerOptions.lib no arquivo tsconfig.json
 import AssistantV2 = require("ibm-watson/assistant/v2");
 import { IamAuthenticator } from "ibm-watson/auth";
+import app = require("teem");
 import appsettings = require("../appsettings");
-import Sql = require("../infra/sql");
 import Resposta = require("./resposta");
 import ajustarNome = require("../utils/ajustarNome");
 
@@ -42,13 +42,13 @@ export = class Pessoa {
 	}
 
 	public static listar(): Promise<Pessoa[]> {
-		return Sql.conectar(async (sql: Sql) => {
+		return app.sql.connect(async (sql) => {
 			return (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[] || [];
 		});
 	}
 
 	public static obter(id: number): Promise<Pessoa> {
-		return Sql.conectar(async (sql: Sql) => {
+		return app.sql.connect(async (sql) => {
 			const lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
 
 			if (lista && lista.length) {
@@ -65,7 +65,7 @@ export = class Pessoa {
 		if (erro)
 			return Promise.resolve(erro);
 
-		return Sql.conectar(async (sql: Sql) => {
+		return app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
 			try {
@@ -97,12 +97,12 @@ export = class Pessoa {
 		if (erro)
 			return Promise.resolve(erro);
 
-		return Sql.conectar(async (sql: Sql) => {
+		return app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
 			try {
 				await sql.query("update pessoa set nome = ?, nomeajustado = ?, feminino = ? where id = ?", [p.nome, p.nomeajustado, p.feminino, p.id]);
-				if (!sql.linhasAfetadas)
+				if (!sql.affectedRows)
 					return "Pessoa não encontrada";
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
@@ -151,9 +151,9 @@ export = class Pessoa {
 	}
 
 	public static excluir(id: number): Promise<string> {
-		return Sql.conectar(async (sql: Sql) => {
+		return app.sql.connect(async (sql) => {
 			await sql.query("delete from pessoa where id = ?", [id]);
-			return (sql.linhasAfetadas ? null : "Pessoa não encontrada");
+			return (sql.affectedRows ? null : "Pessoa não encontrada");
 		});
 	}
 
@@ -183,7 +183,7 @@ export = class Pessoa {
 
 		let idpessoa = 0;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			let lista: Pessoa[] = null;
 
 			if (nomepessoa && (nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ")))
@@ -232,7 +232,7 @@ export = class Pessoa {
 		if (resposta && isNaN(respostaInt))
 			return resposta;
 
-		return ((!isNaN(respostaInt) && await Sql.conectar(async (sql: Sql) => {
+		return ((!isNaN(respostaInt) && await app.sql.connect(async (sql) => {
 			return (await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]) ||
 				await sql.scalar("select respostapadrao from assunto where id = ?", [respostaInt]) ||
 				await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = 1", [idpessoa]) ||

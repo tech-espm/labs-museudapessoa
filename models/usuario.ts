@@ -1,8 +1,5 @@
-﻿import { randomBytes } from "crypto";
-import express = require("express");
-// https://www.npmjs.com/package/lru-cache
-import lru = require("lru-cache");
-import Sql = require("../infra/sql");
+﻿import app = require("teem");
+import { randomBytes } from "crypto";
 import GeradorHash = require("../utils/geradorHash");
 import appsettings = require("../appsettings");
 import intToHex = require("../utils/intToHex");
@@ -25,8 +22,8 @@ export = class Usuario {
 	// Não estamos utilizando Usuario.cookie como middleware, porque existem muitas requests
 	// que não precisam validar o usuário logado, e agora, é assíncrono...
 	// http://expressjs.com/pt-br/guide/writing-middleware.html
-	//public static cookie(req: express.Request, res: express.Response, next: Function): void {
-	public static async cookie(req: express.Request, res: express.Response = null, admin: boolean = false): Promise<Usuario> {
+	//public static cookie(req: app.Request, res: app.Response, next: Function): void {
+	public static async cookie(req: app.Request, res: app.Response = null, admin: boolean = false): Promise<Usuario> {
 		let cookieStr = req.cookies[appsettings.cookie] as string;
 		if (!cookieStr || cookieStr.length !== 48) {
 			if (res) {
@@ -38,9 +35,9 @@ export = class Usuario {
 			let id = parseInt(cookieStr.substr(0, 8), 16) ^ appsettings.usuarioHashId;
 			let usuario: Usuario = null;
 
-			await Sql.conectar(async (sql: Sql) => {
+			await app.sql.connect(async (sql) => {
 				let rows = await sql.query("select id, login, nome, idperfil, token from usuario where id = ?", [id]);
-				let row;
+				let row: any;
 
 				if (!rows || !rows.length || !(row = rows[0]))
 					return;
@@ -78,18 +75,18 @@ export = class Usuario {
 		return [token, cookieStr];
 	}
 
-	public static async efetuarLogin(login: string, senha: string, res: express.Response): Promise<[string, Usuario]> {
+	public static async efetuarLogin(login: string, senha: string, res: app.Response): Promise<[string, Usuario]> {
 		if (!login || !senha)
 			return ["Usuário ou senha inválidos", null];
 
 		let r: string = null;
 		let u: Usuario = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			login = login.normalize().trim().toUpperCase();
 
 			let rows = await sql.query("select id, nome, idperfil, senha from usuario where login = ?", [login]);
-			let row;
+			let row: any;
 			let ok: boolean;
 
 			if (!rows || !rows.length || !(row = rows[0]) || !(ok = await GeradorHash.validarSenha(senha.normalize(), row.senha))) {
@@ -114,15 +111,15 @@ export = class Usuario {
 		return [r, u];
 	}
 
-	public async efetuarLogout(res: express.Response): Promise<void> {
-		await Sql.conectar(async (sql: Sql) => {
+	public async efetuarLogout(res: app.Response): Promise<void> {
+		await app.sql.connect(async (sql) => {
 			await sql.query("update usuario set token = null where id = ?", [this.id]);
 
 			res.cookie(appsettings.cookie, "", { expires: new Date(0), httpOnly: true, path: "/", secure: appsettings.cookieSecure });
 		});
 	}
 
-	public async alterarPerfil(res: express.Response, nome: string, senhaAtual: string, novaSenha: string): Promise<string> {
+	public async alterarPerfil(res: app.Response, nome: string, senhaAtual: string, novaSenha: string): Promise<string> {
 		nome = (nome || "").normalize().trim().toUpperCase();
 		if (nome.length < 3 || nome.length > 100)
 			return "Nome inválido";
@@ -132,7 +129,7 @@ export = class Usuario {
 
 		let r: string = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			if (senhaAtual) {
 				let hash = await sql.scalar("select senha from usuario where id = ?", [this.id]) as string;
 				if (!await GeradorHash.validarSenha(senhaAtual.normalize(), hash)) {
@@ -170,7 +167,7 @@ export = class Usuario {
 	public static async listar(): Promise<Usuario[]> {
 		let lista: Usuario[] = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			lista = await sql.query("select u.id, u.login, u.nome, p.nome perfil, date_format(u.criacao, '%d/%m/%Y') criacao from usuario u inner join perfil p on p.id = u.idperfil order by u.login asc") as Usuario[];
 		});
 
@@ -180,7 +177,7 @@ export = class Usuario {
 	public static async obter(id: number): Promise<Usuario> {
 		let lista: Usuario[] = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			lista = await sql.query("select id, login, nome, idperfil, date_format(criacao, '%d/%m/%Y') criacao from usuario where id = ?", [id]) as Usuario[];
 		});
 
@@ -196,7 +193,7 @@ export = class Usuario {
 		if (u.login.length < 3 || u.login.length > 100)
 			return "Login inválido";
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			try {
 				await sql.query("insert into usuario (login, nome, idperfil, senha, criacao) values (?, ?, ?, ?, now())", [u.login, u.nome, u.idperfil, appsettings.usuarioHashSenhaPadrao]);
 			} catch (e) {
@@ -229,9 +226,9 @@ export = class Usuario {
 		if (u.id === Usuario.IdAdmin)
 			return "Não é possível editar o usuário administrador principal";
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			await sql.query("update usuario set nome = ?, idperfil = ? where id = ?", [u.nome, u.idperfil, u.id]);
-			res = sql.linhasAfetadas.toString();
+			res = sql.affectedRows.toString();
 		});
 
 		return res;
@@ -243,9 +240,9 @@ export = class Usuario {
 
 		let res: string = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			await sql.query("delete from usuario where id = ?", [id]);
-			res = sql.linhasAfetadas.toString();
+			res = sql.affectedRows.toString();
 		});
 
 		return res;
@@ -254,13 +251,13 @@ export = class Usuario {
 	public static async redefinirSenha(id: number): Promise<string> {
 		let res: string = null;
 
-		await Sql.conectar(async (sql: Sql) => {
+		await app.sql.connect(async (sql) => {
 			let login = await sql.scalar("select login from usuario where id = ?", [id]) as string;
 			if (!login) {
 				res = "0";
 			} else {
 				await sql.query("update usuario set token = null, senha = ? where id = ?", [appsettings.usuarioHashSenhaPadrao, id]);
-				res = sql.linhasAfetadas.toString();
+				res = sql.affectedRows.toString();
 			}
 		});
 

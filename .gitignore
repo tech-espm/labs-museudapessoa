@@ -350,12 +350,9 @@ MigrationBackup/
 .ionide/
 .DS_Store
 
-app.js
-config.js
 appsettings.ts
-appsettings.js
 appsettings-producao.js
-*.js.map
 deploy/
 _misc/
 dados/
+src/

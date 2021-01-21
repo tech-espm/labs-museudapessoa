@@ -203,6 +203,7 @@
 		"**/*.js.map": true,
 		"**/deploy/": true,
 		"**/_misc/": true,
-		"**/dados/": true
+		"**/dados/": true,
+		"**/src/": true
 	}
 }

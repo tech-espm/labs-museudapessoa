@@ -1,6 +1,6 @@
-import express = require("express");
+import app = require("teem");
 
-export = function jsonRes(res: express.Response, statusCodeFalha: number, resultado: string): void {
+export = function jsonRes(res: app.Response, statusCodeFalha: number, resultado: string): void {
 	let r: number;
 	if (!resultado) {
 		res.sendStatus(204);

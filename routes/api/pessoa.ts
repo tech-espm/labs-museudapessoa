@@ -1,73 +1,74 @@
-﻿import express = require("express");
-import wrap = require("express-async-error-wrapper");
+﻿import app = require("teem");
 import Pessoa = require("../../models/pessoa");
 import Usuario = require("../../models/usuario");
 
-const router = express.Router();
+class PessoaApiRoute {
+	public static async listar(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+		res.json(await Pessoa.listar());
+	}
 
-// Se utilizar router.xxx() mas não utilizar o wrap(), as exceções ocorridas
-// dentro da função async não serão tratadas!!!
-router.get("/listar", wrap(async (req: express.Request, res: express.Response) => {
-	let u = await Usuario.cookie(req, res);
-	if (!u)
-		return;
-	res.json(await Pessoa.listar());
-}));
+	public static async obter(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+		res.json(await Pessoa.obter(parseInt(req.query["id"] as string)));
+	}
 
-router.get("/obter", wrap(async (req: express.Request, res: express.Response) => {
-	let u = await Usuario.cookie(req, res);
-	if (!u)
-		return;
-	res.json(await Pessoa.obter(parseInt(req.query["id"])));
-}));
+	@app.http.post()
+	public static async criar(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+		const p = req.body as Pessoa,
+			r = await Pessoa.criar(p);
+		if (r)
+			res.status(400).json(r);
+		else
+			res.json(p);
+	}
 
-router.post("/criar", wrap(async (req: express.Request, res: express.Response) => {
-	let u = await Usuario.cookie(req, res);
-	if (!u)
-		return;
-	const p = req.body as Pessoa,
-		r = await Pessoa.criar(p);
-	if (r)
-		res.status(400).json(r);
-	else
-		res.json(p);
-}));
+	@app.http.post()
+	public static async alterar(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+		const p = req.body as Pessoa,
+			r = await Pessoa.alterar(p);
+		if (r)
+			res.status(400).json(r);
+		else
+			res.json(p);
+	}
 
-router.post("/alterar", wrap(async (req: express.Request, res: express.Response) => {
-	let u = await Usuario.cookie(req, res);
-	if (!u)
-		return;
-	const p = req.body as Pessoa,
-		r = await Pessoa.alterar(p);
-	if (r)
-		res.status(400).json(r);
-	else
-		res.json(p);
-}));
+	public static async excluir(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+		const r = await Pessoa.excluir(parseInt(req.query["id"] as string));
+		if (r)
+			res.status(400).json(r);
+		else
+			res.sendStatus(204);
+	}
 
-router.get("/excluir", wrap(async (req: express.Request, res: express.Response) => {
-	let u = await Usuario.cookie(req, res);
-	if (!u)
-		return;
-	const r = await Pessoa.excluir(parseInt(req.query["id"]));
-	if (r)
-		res.status(400).json(r);
-	else
-		res.sendStatus(204);
-}));
+	@app.route.methodName("/iniciarConversa/:n?")
+	public static async iniciarConversa(req: app.Request, res: app.Response) {
+		res.json(await Pessoa.iniciarConversa(req.params["n"]));
+	}
 
-router.get("/iniciarConversa/:n?", wrap(async (req: express.Request, res: express.Response) => {
-	res.json(await Pessoa.iniciarConversa(req.params["n"]));
-}));
+	@app.http.post()
+	public static async enviarMensagem(req: app.Request, res: app.Response) {
+		const idconversa = req.query["idconversa"] as string;
+		const idpessoa = parseInt(req.query["idpessoa"] as string);
+		const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
+		if (!idconversa || isNaN(idpessoa) || idpessoa <= 0 || !mensagem)
+			res.status(400).json("Dados inválidos");
+		else
+			res.json(await Pessoa.enviarMensagem(idconversa, idpessoa, mensagem));
+	}
+}
 
-router.post("/enviarMensagem", wrap(async (req: express.Request, res: express.Response) => {
-	const idconversa = req.query["idconversa"];
-	const idpessoa = parseInt(req.query["idpessoa"]);
-	const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
-	if (!idconversa || isNaN(idpessoa) || idpessoa <= 0 || !mensagem)
-		res.status(400).json("Dados inválidos");
-	else
-		res.json(await Pessoa.enviarMensagem(idconversa, idpessoa, mensagem));
-}));
-
-export = router;
+export = PessoaApiRoute;

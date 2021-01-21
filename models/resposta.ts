@@ -1,4 +1,4 @@
-﻿import Sql = require("../infra/sql");
+﻿import app = require("teem");
 
 export = class Resposta {
 	public id: number;
@@ -19,13 +19,13 @@ export = class Resposta {
 		return null;
 	}
 
-	public static async listar(sql: Sql, idpessoa: number): Promise<Resposta[]> {
+	public static async listar(sql: app.Sql, idpessoa: number): Promise<Resposta[]> {
 		const lista = (await sql.query("select r.id, r.idpessoa, r.idassunto, r.texto, date_format(r.criacao, '%d/%m/%Y') criacao from resposta r inner join assunto a on a.id = r.idassunto where r.idpessoa = ? order by a.nome asc", [idpessoa])) as Resposta[];
 
 		return lista || [];
 	}
 
-	public static async criar(sql: Sql, r: Resposta): Promise<string> {
+	public static async criar(sql: app.Sql, r: Resposta): Promise<string> {
 		let res: string;
 		if ((res = Resposta.validar(r)))
 			return res;
@@ -54,14 +54,14 @@ export = class Resposta {
 		return res;
 	}
 
-	public static async alterar(sql: Sql, r: Resposta): Promise<string> {
+	public static async alterar(sql: app.Sql, r: Resposta): Promise<string> {
 		let res: string;
 		if ((res = Resposta.validar(r)))
 			return res;
 
 		try {
 			await sql.query("update resposta set texto = ? where id = ? and idpessoa = ?", [r.texto, r.id, r.idpessoa]);
-			if (!sql.linhasAfetadas.toString())
+			if (!sql.affectedRows)
 				res = "Resposta ou pessoa não encontrada";
 		} catch (e) {
 			if (e.code) {
@@ -84,8 +84,8 @@ export = class Resposta {
 		return res;
 	}
 
-	public static async excluir(sql: Sql, id: number, idpessoa: number): Promise<string> {
+	public static async excluir(sql: app.Sql, id: number, idpessoa: number): Promise<string> {
 		await sql.query("delete from resposta where id = ? and idpessoa = ?", [id, idpessoa]);
-		return sql.linhasAfetadas.toString();
+		return sql.affectedRows.toString();
 	}
 };
