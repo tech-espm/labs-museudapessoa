@@ -138,7 +138,7 @@
 	function adicionarMensagem(mensagem, nome) {
 		var $div = $(nome ?
 			'<div class="mensagem mensagem-outro"><div class="mensagem-container"><h1>' + encode(nome) + '</h1><p>' + trim(mensagem) + '</p><div>' + agora() + '</div></div></div>' :
-			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- root %>/imagens/loading-grey-t.gif" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
+			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- staticRoot %>/imagens/loading-grey-t.gif" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
 		);
 
 		$conversaContainer.append($div);
