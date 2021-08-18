@@ -178,7 +178,7 @@ export = class Pessoa {
 			sessionId: idconversa,
 			input: { message_type: "text", text: "" }
 		});
-		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || "");
+		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && (respostaMensagem.result.output.generic[0] as AssistantV2.RuntimeResponseGenericRuntimeResponseTypeText).text) || "");
 		const respostaInt = parseInt(resposta);
 
 		let idpessoa = 0;
@@ -227,7 +227,7 @@ export = class Pessoa {
 			sessionId: idconversa,
 			input: { message_type: "text", text: mensagem }
 		});
-		const resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && respostaMensagem.result.output.generic[0].text) || ""),
+		const resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && (respostaMensagem.result.output.generic[0] as AssistantV2.RuntimeResponseGenericRuntimeResponseTypeText).text) || ""),
 			respostaInt = parseInt(resposta);
 		if (resposta && isNaN(respostaInt))
 			return resposta;

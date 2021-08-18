@@ -5,7 +5,7 @@ app.run({
 	root: appsettings.root,
 	port: appsettings.port,
 	sqlConfig: appsettings.sqlPool,
-	disableFileUpload: true,
+	disableFormData: true,
 	htmlErrorHandler: function (err: any, req: app.Request, res: app.Response, next: app.NextFunction) {
 		// Como é um ambiente de desenvolvimento, deixa o objeto do erro
 		// ir para a página, que possivelmente exibirá suas informações

@@ -9,15 +9,14 @@
   "author": {
     "name": "museu"
   },
-  "main": "app.js",
+  "main": "src/app.js",
   "dependencies": {
-    "ibm-watson": "^5.6.0",
-    "teem": "0.0.11"
+    "ibm-watson": "6.1.1",
+    "teem": "0.0.21"
   },
   "devDependencies": {
-    "@types/express": "4.17.11",
-    "@types/express-serve-static-core": "4.17.18",
-    "@types/mysql": "2.15.17",
+    "@types/express": "4.17.13",
+    "@types/express-serve-static-core": "4.17.24",
     "@types/node": "14.14.21"
   },
   "engines": {
