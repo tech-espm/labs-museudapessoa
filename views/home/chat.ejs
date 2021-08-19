@@ -1,17 +1,9 @@
 ﻿<div id="conversa-corpo"><div id="conversa-container"><div style="margin: 0 0 30px;"><img src="<%- staticRoot %>/imagens/logo.png" alt="Logo do Museu da Pessoa" height="75" /></div></div></div>
 <form id="conversa-rodape" method="post" action=".">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="input-group">
-					<input type="text" id="txtMensagem" class="form-control" autocomplete="off" placeholder="Digite uma mensagem">
-					<span class="input-group-btn">
-						<button class="btn btn-primary" type="submit" title="Enviar"><i class="fa fa-send-o fa-nomargin"></i><span class="sr-only">Enviar</span></button>
-					</span>
-				</div>
-			</div>
-		</div>
-	</div>
+	<input type="text" id="txtMensagem" autocomplete="off" placeholder="Escreva sua mensagem" />
+	<button type="submit" class="mupe-icon-bottom">
+		<span>Enviar</span>
+	</button>
 </form>
 
 <%- contentFor("styles") %>
@@ -32,7 +24,7 @@
 		padding: 0 15px 15px;
 	}
 
-	#conversa-container {
+	#conversa-container, #conversa-rodape {
 		max-width: 1000px;
 		margin: 0 auto;
 	}
@@ -120,13 +112,82 @@
 
 	#conversa-rodape {
 		position: fixed;
+		display: flex;
 		left: 0;
 		height: 64px;
 		right: 0;
 		bottom: 0;
-		padding: 15px 0;
-		background-color: rgba(255, 255, 255, 0.9);
+		padding: 0;
+		font-size: 15px;
 	}
+
+	#txtMensagem {
+		display: block;
+		width: 100%;
+		height: 64px;
+		border: 0 none transparent;
+	}
+
+	#txtMensagem {
+		display: block;
+		width: 100%;
+		height: 64px;
+		border: 0 none transparent;
+		outline: 0 none transparent;
+		padding: 5px 15px;
+	}
+
+	.mupe-icon-bottom {
+		background: #f27292;
+		color: #000;
+		padding: .7em 1.6em .9em;
+		display: inline-block;
+		max-width: 100%;
+		font-weight: bold;
+		height: 64px;
+		position: relative;
+		text-decoration: none !important;
+		margin: 0;
+		border: none !important;
+		border-radius: 0 !important;
+		width: 100px;
+		text-align: center;
+		min-width: 0;
+		transition: color ease .5s;
+	}
+
+		.mupe-icon-bottom:before {
+			content: "";
+			display: block;
+			position: absolute;
+			background: #000;
+			width: 100%;
+			height: 6px;
+			bottom: 0;
+			left: 0;
+			transition: height ease .5s, border-bottom-width ease .5s;
+			z-index: 0;
+			border-bottom: 0 solid #f27292;
+		}
+
+		.mupe-icon-bottom:hover {
+			color: #fff;
+		}
+
+			.mupe-icon-bottom:hover:before {
+				height: 100%;
+				border-bottom-width: 6px;
+			}
+
+		.mupe-icon-bottom span {
+			vertical-align: middle;
+			display: inline-block;
+			line-height: 1em;
+			font-size: 1em;
+			z-index: 2;
+			position: relative;
+			padding-bottom: .2em;
+		}
 </style>
 
 <%- contentFor("scripts") %>
@@ -173,12 +234,12 @@
 				contentType: "application/json",
 				processData: false,
 				success: function (dados) {
-					$msg.find("img").remove();
+					$msg.find(".mensagem-eu img").remove();
 					$msg.find(".mensagem-eu").removeClass("espera");
 					adicionarMensagem(dados, nomepessoa);
 				},
 				error: function () {
-					$msg.find("img").remove();
+					$msg.find(".mensagem-eu img").remove();
 					$msg.find(".mensagem-eu").removeClass("espera").addClass("erro");
 					Notification.error("Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad, true);
 				}
