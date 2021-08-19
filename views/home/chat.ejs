@@ -1,4 +1,4 @@
-﻿<div id="conversa-corpo"><div id="conversa-container"></div></div>
+﻿<div id="conversa-corpo"><div id="conversa-container"><div style="margin: 0 0 30px;"><img src="<%- staticRoot %>/imagens/logo.png" alt="Logo do Museu da Pessoa" height="75" /></div></div></div>
 <form id="conversa-rodape" method="post" action=".">
 	<div class="container-fluid">
 		<div class="row">
@@ -37,18 +37,40 @@
 		margin: 0 auto;
 	}
 
-	.mensagem {
-		text-align: left;
-		display: inline-block;
-		min-width: 150px;
-		max-width: 450px;
-		border-style: solid;
+	.avatar {
+		width: 50px;
+		vertical-align: top;
+	}
+
+	.linha-mensagem {
 		margin: 15px 0 0;
 	}
 
+	.mensagem {
+		position: relative;
+		text-align: left;
+		display: inline-block;
+		vertical-align: top;
+		min-width: 150px;
+		max-width: 50%;
+		margin: 15px 0 0;
+	}
+
+	.balao {
+		position: absolute;
+		background-image: url('<%- staticRoot %>/imagens/balao.png');
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		top: 12px;
+		width: 32px;
+		height: 16px;
+		z-index: -1;
+	}
+
 	.mensagem-container {
-		border-radius: 0 0 8px 8px;
-		padding: 0 10px 10px;
+		padding: 10px;
+		color: #000;
+		background-color: #fff;
 	}
 
 		.mensagem-container > h1, .mensagem-container > p {
@@ -58,6 +80,7 @@
 
 		.mensagem-container > h1 {
 			font-weight: 600;
+			color: #f27292;
 		}
 
 		.mensagem-container > p {
@@ -71,46 +94,28 @@
 		}
 
 	.mensagem-outro {
-		color: #333;
-		border-radius: 0 8px 8px 8px;
-		border-color: #fff transparent transparent;
-		border-width: 10px 0 0 10px;
+		padding: 0 0 0 20px;
 	}
 
-		.mensagem-outro > .mensagem-container {
-			background-color: #fff;
+		.mensagem-outro > .balao {
+			left: 5px;
 		}
 
 	.mensagem-eu {
-		color: #000;
-		border-radius: 8px 0 8px 8px;
 		margin-left: auto;
-		border-color: #dcf8c6 transparent transparent;
-		border-width: 10px 10px 0 0;
+		padding: 0 20px 0 0;
 	}
 
-		.mensagem-eu > .mensagem-container {
-			background-color: #dcf8c6;
+		.mensagem-eu > .balao {
+			right: 5px;
 		}
 
-	.mensagem-eu.erro {
-		border-color: #f8c6c6 transparent transparent;
+	.mensagem-eu.erro > .mensagem-container {
+		background-color: #f8c6c6;
 	}
 
-		.mensagem-eu.erro > .mensagem-container {
-			background-color: #f8c6c6;
-		}
-
-	.mensagem-eu.espera {
-		border-color: #f5f5f5 transparent transparent;
-	}
-
-		.mensagem-eu.espera > .mensagem-container {
-			background-color: #f5f5f5;
-		}
-
-	.mensagem-eu-img {
-		display: none;
+	.mensagem-eu.erro > .balao {
+		background-image: url('<%- staticRoot %>/imagens/balao-erro.png');
 	}
 
 	#conversa-rodape {
@@ -143,8 +148,8 @@
 
 	function adicionarMensagem(mensagem, nome) {
 		var $div = $(nome ?
-			'<div class="mensagem mensagem-outro"><div class="mensagem-container"><h1>' + encode(nome) + '</h1><p>' + trim(mensagem) + '</p><div>' + agora() + '</div></div></div>' :
-			'<div class="text-right"><div class="mensagem mensagem-eu espera"><div class="mensagem-container"><img src="<%- staticRoot %>/imagens/loading-grey-t.gif" /><p>' + encode(trim(mensagem)) + '</p><div>' + agora() + '</div></div></div></div>'
+			'<div class="linha-mensagem"><img src="<%- staticRoot %>/imagens/avatar-mani.png" alt="Avatar da Mani" width="75" height="75" /><div class="mensagem mensagem-outro"><div class="balao"></div><div class="mensagem-container"><h1>' + encode(nome) + ' - ' + agora() + '</h1><p>' + trim(mensagem) + '</p></div></div></div>' :
+			'<div class="linha-mensagem text-right"><div class="mensagem mensagem-eu espera"><div class="balao"></div><div class="mensagem-container"><h1>Você - ' + agora() + '</h1><img src="<%- staticRoot %>/imagens/loading-white.gif" /><p>' + encode(trim(mensagem)) + '</p></div></div><img src="<%- staticRoot %>/imagens/avatar-voce.png" alt="Seu Avatar" width="75" height="75" /></div>'
 		);
 
 		$conversaContainer.append($div);
