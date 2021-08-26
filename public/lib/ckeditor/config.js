@@ -6,7 +6,7 @@
 CKEDITOR.editorConfig = function( config ) {
 	//https://ckeditor.com/cke4/addon/image2
 	config.language = "pt-br";
-	config.height = 500;
+	config.height = 300;
 	config.resize_enabled = false;
 	config.toolbarCanCollapse = true;
 	config.toolbar = [
