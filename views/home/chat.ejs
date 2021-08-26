@@ -6,6 +6,29 @@
 	</button>
 </form>
 
+<div id="mensagem-inicial-painel">
+	<div id="mensagem-inicial-container">
+		<div id="mensagem-inicial-balao">
+			Olá, eu sou a <span>Maní</span>!
+			<br />
+			A assistente virtual
+			<br />
+			do Museu da Pessoa!
+			<br />
+			<small><span>Vamos conversar</span>?</small>
+		</div>
+		<div id="mensagem-inicial-avatar"></div>
+		<div id="mensagem-inicial-html">
+			<%- mensagem %>
+			<div id="mensagem-inicial-botao">
+				<button type="button" class="mupe-icon-bottom" style="width: 180px;" onclick="iniciarConversa()">
+					<span>Iniciar conversa!</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <%- contentFor("styles") %>
 <link rel="stylesheet" href="<%- staticRoot %>/fonts/gilroy.css" />
 
@@ -24,9 +47,85 @@
 		padding: 0 15px 15px;
 	}
 
-	#conversa-container, #conversa-rodape {
+	#mensagem-inicial-painel {
+		position: fixed;
+		left: 0;
+		top: 80px;
+		right: 0;
+		bottom: 0;
+		opacity: 1;
+		transition: opacity ease .5s;
+	}
+
+	#mensagem-inicial-painel.invisivel {
+		opacity: 0;
+	}
+
+	#conversa-container, #conversa-rodape, #mensagem-inicial-container {
 		max-width: 1000px;
 		margin: 0 auto;
+	}
+
+	#mensagem-inicial-container {
+		position: relative;
+		height: 100%;
+		min-height: 100%;
+		max-height: 100%;
+	}
+
+	#mensagem-inicial-balao {
+		position: absolute;
+		right: 55%;
+		bottom: 65%;
+		width: auto;
+		max-width: 43%;
+		padding: 10px;
+		font-weight: 600;
+		background-color: #fff;
+		font-size: 22px;
+	}
+
+		#mensagem-inicial-balao span {
+			color: #f27292;
+			font-weight: bold;
+		}
+
+	#mensagem-inicial-avatar {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		right: 2%;
+		bottom: 55%;
+		background-position: left bottom;
+		background-size: contain;
+		background-image: url('<%- staticRoot %>/imagens/mani.png');
+		background-repeat: no-repeat;
+	}
+
+	@media(max-width:767px) {
+		#mensagem-inicial-balao {
+			bottom: 58%;
+			font-size: 16px;
+		}
+	}
+
+	@media(max-width:450px) {
+		#mensagem-inicial-balao {
+			font-size: 14px;
+		}
+	}
+
+	#mensagem-inicial-html {
+		position: absolute;
+		left: 0;
+		top: 45%;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+	}
+
+	#mensagem-inicial-botao {
+		text-align: center;
 	}
 
 	.avatar {
@@ -190,6 +289,200 @@
 		}
 </style>
 
+<style type="text/css">
+/* Tenta simular o conteúdo do arquivo public/lib/ckeditor/contents.css */
+#mensagem-inicial-html {
+	font-family: 'Gilroy', sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: 15px;
+	line-height: 1.5;
+	color: #000;
+	background-color: #fff;
+	padding: 10px;
+}
+
+#mensagem-inicial-html blockquote {
+	font-style: italic;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0;
+}
+
+#mensagem-inicial-html a {
+	color: #0782C1;
+}
+
+#mensagem-inicial-html ol,
+#mensagem-inicial-html ul,
+#mensagem-inicial-html dl {
+	/* IE7: reset rtl list margin. (#7334) */
+	margin-right: 0px;
+	/* Preserved spaces for list items with text direction different than the list. (#6249,#8049)*/
+	padding: 0 0 0 20px;
+}
+
+#mensagem-inicial-html h1,
+#mensagem-inicial-html h2,
+#mensagem-inicial-html h3,
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6 {
+	font-weight: normal;
+	font-style: normal;
+	line-height: 1.25;
+}
+
+#mensagem-inicial-html h1 {
+	font-size: 30px;
+}
+
+#mensagem-inicial-html h2 {
+	font-size: 25px;
+}
+
+#mensagem-inicial-html h3 {
+	font-size: 20px;
+}
+
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6 {
+	font-size: 15px;
+}
+
+#mensagem-inicial-html h1,
+#mensagem-inicial-html h2,
+#mensagem-inicial-html h3,
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6,
+#mensagem-inicial-html p,
+#mensagem-inicial-html ol,
+#mensagem-inicial-html ul,
+#mensagem-inicial-html dl {
+	margin: 0 0 15px;
+}
+
+#mensagem-inicial-html hr {
+	border: 0px;
+	border-top: 1px solid #000;
+	margin: 15px 0;
+}
+
+#mensagem-inicial-html img.right {
+	border: 1px solid #000;
+	float: right;
+	margin-left: 15px;
+	padding: 5px;
+}
+
+#mensagem-inicial-html img.left {
+	border: 1px solid #000;
+	float: left;
+	margin-right: 15px;
+	padding: 5px;
+}
+
+#mensagem-inicial-html pre {
+	white-space: pre-wrap; /* CSS 2.1 */
+	word-wrap: break-word; /* IE7 */
+	-moz-tab-size: 4;
+	tab-size: 4;
+}
+
+#mensagem-inicial-html .marker {
+	background-color: Yellow;
+}
+
+#mensagem-inicial-html span[lang] {
+	font-style: italic;
+}
+
+#mensagem-inicial-html figure {
+	text-align: center;
+	border: solid 1px #000;
+	background: #eee;
+	padding: 15px;
+	margin: 15px;
+	display: inline-block;
+}
+
+#mensagem-inicial-html figure > figcaption {
+	text-align: center;
+	display: block; /* For IE8 */
+}
+
+#mensagem-inicial-html a > img {
+	padding: 1px;
+	margin: 1px;
+	border: none;
+	outline: 0 none transparent;
+}
+
+/* Widget Styles */
+#mensagem-inicial-html .code-featured {
+	border: 5px solid red;
+}
+
+#mensagem-inicial-html .math-featured {
+	padding: 20px;
+	box-shadow: 0 0 2px rgba(200, 0, 0, 1);
+	background-color: rgba(255, 0, 0, 0.05);
+	margin: 10px;
+}
+
+#mensagem-inicial-html .image-clean {
+	border: 0;
+	background: none;
+	padding: 0;
+}
+
+#mensagem-inicial-html .image-clean > figcaption {
+	font-size: .9em;
+	text-align: right;
+}
+
+#mensagem-inicial-html .image-grayscale {
+	background-color: white;
+	color: #666;
+}
+
+#mensagem-inicial-html .image-grayscale img, img.image-grayscale {
+	filter: grayscale(100%);
+}
+
+#mensagem-inicial-html .embed-240p {
+	max-width: 426px;
+	max-height: 240px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-360p {
+	max-width: 640px;
+	max-height: 360px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-480p {
+	max-width: 854px;
+	max-height: 480px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-720p {
+	max-width: 1280px;
+	max-height: 720px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-1080p {
+	max-width: 1920px;
+	max-height: 1080px;
+	margin:0 auto;
+}
+</style>
+
 <%- contentFor("scripts") %>
 <script type="text/javascript">
 	"use strict";
@@ -249,25 +542,37 @@
 		return false;
 	}
 
-	Notification.wait();
+	function iniciarConversa() {
+		if ($.active)
+			return;
 
-	$.ajax({
-		//<% if (nomepessoa) { %> {
-		url: "<%- root %>/api/pessoa/iniciarConversa/<%- encodeURIComponent(nomepessoa.trim()) %>",
-		//<% } else { %>
-		url: "<%- root %>/api/pessoa/iniciarConversa",
-		//<% } %>
-		cache: false,
-		success: function (dados) {
-			idconversa = dados.idconversa;
-			idpessoa = dados.idpessoa;
-			nomepessoa = dados.nomepessoa;
-			adicionarMensagem(dados.resposta, nomepessoa);
-			Notification.hide();
-		},
-		error: function () {
-			var msg = "Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad;
-			Notification.error(msg, true);
-		}
-	});
+		Notification.wait();
+
+		$("#mensagem-inicial-painel").addClass("invisivel");
+
+		setTimeout(function () {
+			$("#mensagem-inicial-painel").remove();
+		}, 520);
+
+		$.ajax({
+			//<% if (nomepessoa) { %> {
+			url: "<%- root %>/api/pessoa/iniciarConversa/<%- encodeURIComponent(nomepessoa.trim()) %>",
+			//<% } else { %>
+			url: "<%- root %>/api/pessoa/iniciarConversa",
+			//<% } %>
+			cache: false,
+			success: function (dados) {
+				idconversa = dados.idconversa;
+				idpessoa = dados.idpessoa;
+				nomepessoa = dados.nomepessoa;
+				adicionarMensagem(dados.resposta, nomepessoa);
+				Notification.hide();
+			},
+			error: function () {
+				var msg = "Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad;
+				Notification.error(msg, true);
+			}
+		});
+	}
+
 </script>

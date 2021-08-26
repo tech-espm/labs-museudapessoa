@@ -186,7 +186,14 @@ export = class Pessoa {
 		await app.sql.connect(async (sql) => {
 			let lista: Pessoa[] = null;
 
-			if (nomepessoa && (nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ")))
+			if (nomepessoa)
+				nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ");
+
+			// Novo requisito: não teremos mais chat aleatório
+			if (!nomepessoa)
+				nomepessoa = "mani";
+
+			if (nomepessoa)
 				lista = (await sql.query("select id, nome from pessoa where nomeajustado = ?", [nomepessoa])) as Pessoa[];
 
 			if (!lista || !lista.length)
