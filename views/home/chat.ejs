@@ -18,13 +18,15 @@
 			<small><span>Vamos conversar</span>?</small>
 		</div>
 		<div id="mensagem-inicial-avatar"></div>
-		<div id="mensagem-inicial-html">
+	</div>
+	<div id="mensagem-inicial-html">
+		<div id="mensagem-inicial-html-inner">
 			<%- mensagem %>
-			<div id="mensagem-inicial-botao">
-				<button type="button" class="mupe-icon-bottom" style="width: 180px;" onclick="iniciarConversa()">
-					<span>Iniciar conversa!</span>
-				</button>
-			</div>
+		</div>
+		<div id="mensagem-inicial-botao">
+			<button type="button" class="mupe-icon-bottom" style="width: 180px;" onclick="iniciarConversa()">
+				<span>Iniciar conversa!</span>
+			</button>
 		</div>
 	</div>
 </div>
@@ -122,6 +124,11 @@
 		right: 0;
 		bottom: 0;
 		overflow: auto;
+	}
+
+	#mensagem-inicial-html-inner {
+		max-width: 80ch;
+		margin: 0 auto;
 	}
 
 	#mensagem-inicial-botao {
