@@ -64,7 +64,8 @@ INSERT INTO assunto (id, nome, respostapadrao, criacao) VALUES
 (23, 'Quantidade de Histórias do Museu', 'O Museu tem mais de 18 mil histórias de vida! 😳\r\n\r\nSe você quiser acessá-las, <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clique aqui para visitar o site do acervo</a>.', NOW()),
 (24, 'Programação do Museu', 'Você pode conferir a programação do Museu da Pessoa <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clicando aqui</a>. 😉\r\n\r\nAssine a nossa newsletter para receber todas as nossas novidades!', NOW()),
 (25, 'Redes Sociais do Museu', 'Siga o Museu nas suas redes sociais favoritas:\r\n\r\nLinkedIn: <a href=\"https://www.linkedin.com/company/museudapessoa/\" target=\"_blank\">linkedin.com/company/museudapessoa</a>\r\n\r\nInstagram: <a href=\"https://www.instagram.com/museudapessoa/\" target=\"_blank\">instagram.com/museudapessoa</a>\r\n\r\nTwitter: <a href=\"https://twitter.com/museudapessoa\" target=\"_blank\">twitter.com/museudapessoa</a>\r\n\r\nYoutube: <a href=\"https://www.youtube.com/user/museudapessoa\" target=\"_blank\">youtube.com/user/museudapessoa</a>\r\n\r\nFacebook: <a href=\"https://www.facebook.com/museudapessoa/\" target=\"_blank\">facebook.com/museudapessoa</a>', NOW()),
-(26, 'Origem do Nome', NULL, NOW());
+(26, 'Origem do Nome', NULL, NOW()),
+(27, 'Time de Futebol', 'Eu não acompanho futebol 😢', NOW());
 
 -- DROP TABLE IF EXISTS pessoa;
 CREATE TABLE pessoa (

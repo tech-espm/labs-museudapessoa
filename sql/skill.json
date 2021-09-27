@@ -127,16 +127,16 @@
       "intent": "boas-vindas",
       "examples": [
         {
-          "text": "eae"
-        },
-        {
           "text": "e ae"
         },
         {
-          "text": "eai"
+          "text": "eae"
         },
         {
           "text": "e ai"
+        },
+        {
+          "text": "eai"
         },
         {
           "text": "eaí"
@@ -589,6 +589,12 @@
           "text": "curte fazer o que?"
         },
         {
+          "text": "de que você gosta?"
+        },
+        {
+          "text": "do que você gosta?"
+        },
+        {
           "text": "hobby"
         },
         {
@@ -607,6 +613,9 @@
           "text": "o que gosta de fazer?"
         },
         {
+          "text": "o que você gosta?"
+        },
+        {
           "text": "o que você gosta de fazer para passar o tempo?"
         },
         {
@@ -623,6 +632,12 @@
         },
         {
           "text": "tem algum passatempo?"
+        },
+        {
+          "text": "você gosta de que?"
+        },
+        {
+          "text": "você gosta do que?"
         }
       ],
       "description": ""
@@ -1193,6 +1208,45 @@
         }
       ],
       "description": ""
+    },
+    {
+      "intent": "time",
+      "examples": [
+        {
+          "text": "Para qual time você torce?"
+        },
+        {
+          "text": "Qual é seu time?"
+        },
+        {
+          "text": "Qual é seu time do coração?"
+        },
+        {
+          "text": "Que time você torce?"
+        },
+        {
+          "text": "Tem time?"
+        },
+        {
+          "text": "Time?"
+        },
+        {
+          "text": "Torce para alguém?"
+        },
+        {
+          "text": "Torce para algum time?"
+        },
+        {
+          "text": "Torce para qual time?"
+        },
+        {
+          "text": "Você tem um time?"
+        },
+        {
+          "text": "Você torce para quem?"
+        }
+      ],
+      "description": ""
     }
   ],
   "entities": [],
@@ -1216,7 +1270,7 @@
       },
       "conditions": "anything_else",
       "dialog_node": "Anything else",
-      "previous_sibling": "node_10_1608314057471"
+      "previous_sibling": "node_4_1632776485642"
     },
     {
       "type": "standard",
@@ -1458,6 +1512,26 @@
       "conditions": "#redes-sociais-museu",
       "dialog_node": "node_4_1608307455155",
       "previous_sibling": "node_7_1608307121807"
+    },
+    {
+      "type": "standard",
+      "title": "27",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "27"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "#time",
+      "dialog_node": "node_4_1632776485642",
+      "previous_sibling": "node_10_1608314057471"
     },
     {
       "type": "standard",
