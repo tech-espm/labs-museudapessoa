@@ -1,7 +1,7 @@
 node_modules/
 .DS_Store
-appsettings.ts
-appsettings-producao.js
+.env
+.env-producao
 deploy/
 _misc/
 dados/
