@@ -1,5 +1,6 @@
 ﻿import app = require("teem");
 import MensagemInicial = require("../models/mensagemInicial");
+import Pessoa = require("../models/pessoa");
 import Usuario = require("../models/usuario");
 
 class IndexRoute {
@@ -13,7 +14,12 @@ class IndexRoute {
 
 	@app.route.methodName("/chat/:n?")
 	public static async chat(req: app.Request, res: app.Response) {
-		res.render("home/chat", { layout: "layout-externo", nomepessoa: (req.params["n"] || ""), mensagem: await MensagemInicial.obter() });
+		res.render("home/chat", {
+			layout: "layout-externo",
+			nomepessoa: (req.params["n"] || ""),
+			mensagem: await MensagemInicial.obter(),
+			pessoa: await Pessoa.obterConversa(req.params["n"] || "")
+		});
 	}
 
 	@app.http.all()

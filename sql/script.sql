@@ -31,41 +31,44 @@ INSERT INTO usuario (login, nome, idperfil, senha, token, criacao) VALUES ('ADMI
 -- DROP TABLE IF EXISTS assunto;
 CREATE TABLE assunto (
   id int NOT NULL,
-  nome varchar(100) NOT NULL,
+  nome varchar(200) NOT NULL,
+  visivel tinyint NOT NULL,
   respostapadrao TEXT NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY nome_UN (nome)
 );
 
-INSERT INTO assunto (id, nome, respostapadrao, criacao) VALUES
-(1, 'Assunto Desconhecido', 'Me desculpe... Não sei o que dizer sobre isso 😥\r\nPor favor, poderia falar de novo, de outra forma?\r\n\r\nAqui estão alguns dos tópicos que talvez eu saiba alguma coisa:\r\n\r\n- Introdução sobre mim\r\n- Origem do meu nome\r\n- Brincadeiras\r\n- Broncas\r\n- Infância\r\n- Cidade natal\r\n- Educação\r\n- Gostos\r\n- Filhos\r\n- Idade / Ano de nascimento\r\n- Pais\r\n- Profissão\r\n- Músicas\r\n- Filmes\r\n\r\nAlém de informações sobre o Museu da Pessoa:\r\n\r\n- O que é o Museu\r\n- Contato com o Museu\r\n- Programa \"Conte Sua História\"\r\n- Apoio ao Museu / Voluntariado\r\n- Quantidade de histórias do Museu\r\n- Fundação do Museu\r\n- Programação do Museu\r\n- Redes sociais do Museu', NOW()),
-(2, 'Boas vindas', 'Olá, seja muito bem-vinde ao Museu da Pessoa! O que você gostaria de saber?', NOW()),
-(3, 'Saudação', 'Olá! Tudo bem? 😊', NOW()),
-(4, 'Introdução / Sobre mim', NULL, NOW()),
-(5, 'Brincadeiras', NULL, NOW()),
-(6, 'Broncas', NULL, NOW()),
-(7, 'Infância', NULL, NOW()),
-(8, 'Cidade Natal', NULL, NOW()),
-(9, 'Educação', NULL, NOW()),
-(10, 'Gostos', NULL, NOW()),
-(11, 'Filhos', NULL, NOW()),
-(12, 'Idade / Ano de Nascimento', NULL, NOW()),
-(13, 'Pais', NULL, NOW()),
-(14, 'Profissão', NULL, NOW()),
-(15, 'Músicas', NULL, NOW()),
-(16, 'Filmes', NULL, NOW()),
-(17, 'Programa \"Conte Sua História\"', 'O Museu possui um programa, chamado Conte Sua História, onde conduzimos entrevistas de história de vida, realizadas por pesquisadores do museu e gravadas através de videoconferência.\r\n\r\nO material registrado passa a fazer parte do acervo do Museu da Pessoa, preservado para o futuro e disponível para acesso público.\r\n\r\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaXRdADz0lp0MSPgWb-k7gBNPuOP17qQGg1jI_8dHeBWtuiQ/closedform\" target=\"_blank\">Clique aqui para se inscrever</a> 😊', NOW()),
-(18, 'Fundação do Museu', 'O Museu da Pessoa nasceu em 1991, antes da Internet. Em 1997 abriu seu espaço virtual para receber histórias pela Internet. Desde 2014 passou a receber também coleções montadas pelos usuários. Em 2009, criou uma Tecnologia Social de Memória para apoiar pessoas, comunidades e instituições a registrarem suas histórias. \r\n\r\nNossa visão é ter um museu em cada mão para que as histórias de vida se tornem um antídoto contra a intolerância. Ouvir é o primeiro passo para transformar seu jeito de ver o mundo.\r\n\r\nColabore. Participe. Cada história importa!\r\n\r\n#somosnossashistórias', NOW()),
-(19, 'O que é o Museu', 'O Museu da Pessoa é um museu virtual e colaborativo de histórias de vida 😊\r\n\r\nNossa missão é transformar a história de toda e qualquer pessoa em patrimônio da humanidade.', NOW()),
-(20, 'Ajuda sobre o Chat', 'Se pediu ajuda, ela chegou! Aqui estão alguns dos tópicos que talvez eu saiba alguma coisa:\r\n\r\n- Introdução sobre mim\r\n- Origem do meu nome\r\n- Brincadeiras\r\n- Broncas\r\n- Infância\r\n- Cidade natal\r\n- Educação\r\n- Gostos\r\n- Filhos\r\n- Idade / Ano de nascimento\r\n- Pais\r\n- Profissão\r\n- Músicas\r\n- Filmes\r\n\r\nAlém de informações sobre o Museu da Pessoa:\r\n\r\n- O que é o Museu\r\n- Contato com o Museu\r\n- Programa \"Conte Sua História\"\r\n- Apoio ao Museu / Voluntariado\r\n- Quantidade de histórias do Museu\r\n- Fundação do Museu\r\n- Programação do Museu\r\n- Redes sociais do Museu', NOW()),
-(21, 'Apoio ao Museu / Voluntariado', 'O Museu também é feito por voluntários! Se você quiser fazer parte deste time, <a href=\"https://museudapessoa.us10.list-manage.com/subscribe?u=50cf1cee8ddf1afde00b87af7&id=0139059499\" target=\"_blank\"> responda este formulário que entraremos em contato</a>. 😊\r\n\r\nVamos, juntos, transformar histórias de vida de toda e qualquer pessoal em patrimônio da humanidade!\r\n\r\nSe você gostou da nossa causa, <a href=\"https://museudapessoa.org/apoie\" target=\"_blank\">clique aqui para saber mais como nos ajudar</a>. 😊', NOW()),
-(22, 'Contato com o Museu', 'Caso você queira falar diretamente conosco, o e-mail de nossa equipe de atendimento é: <a href=\"mailto:atendimento@museudapessoa.org\" target=\"_blank\">atendimento@museudapessoa.org</a> ✉\r\n\r\nNão sei se você sabe, mas a casa do Museu é na internet, pois somos um Museu Virtual de histórias de vida.\r\n\r\nComo estamos construindo nossa nova plataforma, você pode visitar a gente através de dois canais: <a href=\"https://acervo.museudapessoa.org\" target=\"_blank\">acervo.museudapessoa.org</a> pra você navegar no nosso acervo e o <a href=\"https://museudapessoa.org\" target=\"_blank\">museudapessoa.org</a> para você experimentar nossas exposições em um novo formato.\r\n\r\nA gente também tem uma sede administrativa que fica na Vila Madalena, mas estamos fechados temporariamente para visitação por conta da pandemia de COVID-19. 😥', NOW()),
-(23, 'Quantidade de Histórias do Museu', 'O Museu tem mais de 18 mil histórias de vida! 😳\r\n\r\nSe você quiser acessá-las, <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clique aqui para visitar o site do acervo</a>.', NOW()),
-(24, 'Programação do Museu', 'Você pode conferir a programação do Museu da Pessoa <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clicando aqui</a>. 😉\r\n\r\nAssine a nossa newsletter para receber todas as nossas novidades!', NOW()),
-(25, 'Redes Sociais do Museu', 'Siga o Museu nas suas redes sociais favoritas:\r\n\r\nLinkedIn: <a href=\"https://www.linkedin.com/company/museudapessoa/\" target=\"_blank\">linkedin.com/company/museudapessoa</a>\r\n\r\nInstagram: <a href=\"https://www.instagram.com/museudapessoa/\" target=\"_blank\">instagram.com/museudapessoa</a>\r\n\r\nTwitter: <a href=\"https://twitter.com/museudapessoa\" target=\"_blank\">twitter.com/museudapessoa</a>\r\n\r\nYoutube: <a href=\"https://www.youtube.com/user/museudapessoa\" target=\"_blank\">youtube.com/user/museudapessoa</a>\r\n\r\nFacebook: <a href=\"https://www.facebook.com/museudapessoa/\" target=\"_blank\">facebook.com/museudapessoa</a>', NOW()),
-(26, 'Origem do Nome', NULL, NOW()),
-(27, 'Time de Futebol', 'Eu não acompanho futebol 😢', NOW());
+-- Manter sincronizado com o arquivo models/assunto.ts
+-- O id do assunto de boas vindas deve ser 2!!!
+INSERT INTO assunto (id, nome, visivel, respostapadrao, criacao) VALUES
+(1, 'Assunto Desconhecido', 0, 'Me desculpe... Não sei o que dizer sobre isso 😥\r\nPor favor, poderia falar de novo, de outra forma?\r\n\r\nAqui estão alguns dos tópicos que talvez eu saiba alguma coisa:\r\n\r\n- Introdução sobre mim\r\n- Origem do meu nome\r\n- Brincadeiras\r\n- Broncas\r\n- Infância\r\n- Cidade natal\r\n- Educação\r\n- Gostos\r\n- Filhos\r\n- Idade / Ano de nascimento\r\n- Pais\r\n- Profissão\r\n- Músicas\r\n- Filmes\r\n\r\nAlém de informações sobre o Museu da Pessoa:\r\n\r\n- O que é o Museu\r\n- Contato com o Museu\r\n- Programa \"Conte Sua História\"\r\n- Apoio ao Museu / Voluntariado\r\n- Quantidade de histórias do Museu\r\n- Fundação do Museu\r\n- Programação do Museu\r\n- Redes sociais do Museu', NOW()),
+(2, 'Boas vindas', 0, 'Olá, seja muito bem-vinde ao Museu da Pessoa! O que você gostaria de saber?', NOW()),
+(3, 'Saudação', 1, 'Olá! Tudo bem? 😊', NOW()),
+(4, 'Introdução / Sobre mim', 1, NULL, NOW()),
+(5, 'Brincadeiras', 1, NULL, NOW()),
+(6, 'Broncas', 1, NULL, NOW()),
+(7, 'Infância', 1, NULL, NOW()),
+(8, 'Cidade Natal', 1, NULL, NOW()),
+(9, 'Educação', 1, NULL, NOW()),
+(10, 'Gostos', 1, NULL, NOW()),
+(11, 'Filhos', 1, NULL, NOW()),
+(12, 'Idade / Ano de Nascimento', 1, NULL, NOW()),
+(13, 'Pais', 1, NULL, NOW()),
+(14, 'Profissão', 1, NULL, NOW()),
+(15, 'Músicas', 1, NULL, NOW()),
+(16, 'Filmes', 1, NULL, NOW()),
+(17, 'Programa \"Conte Sua História\"', 1, 'O Museu possui um programa, chamado Conte Sua História, onde conduzimos entrevistas de história de vida, realizadas por pesquisadores do museu e gravadas através de videoconferência.\r\n\r\nO material registrado passa a fazer parte do acervo do Museu da Pessoa, preservado para o futuro e disponível para acesso público.\r\n\r\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaXRdADz0lp0MSPgWb-k7gBNPuOP17qQGg1jI_8dHeBWtuiQ/closedform\" target=\"_blank\">Clique aqui para se inscrever</a> 😊', NOW()),
+(18, 'Fundação do Museu', 1, 'O Museu da Pessoa nasceu em 1991, antes da Internet. Em 1997 abriu seu espaço virtual para receber histórias pela Internet. Desde 2014 passou a receber também coleções montadas pelos usuários. Em 2009, criou uma Tecnologia Social de Memória para apoiar pessoas, comunidades e instituições a registrarem suas histórias. \r\n\r\nNossa visão é ter um museu em cada mão para que as histórias de vida se tornem um antídoto contra a intolerância. Ouvir é o primeiro passo para transformar seu jeito de ver o mundo.\r\n\r\nColabore. Participe. Cada história importa!\r\n\r\n#somosnossashistórias', NOW()),
+(19, 'O que é o Museu', 1, 'O Museu da Pessoa é um museu virtual e colaborativo de histórias de vida 😊\r\n\r\nNossa missão é transformar a história de toda e qualquer pessoa em patrimônio da humanidade.', NOW()),
+(20, 'Ajuda sobre o Chat', 1, 'Se pediu ajuda, ela chegou! Aqui estão alguns dos tópicos que talvez eu saiba alguma coisa:\r\n\r\n- Introdução sobre mim\r\n- Origem do meu nome\r\n- Brincadeiras\r\n- Broncas\r\n- Infância\r\n- Cidade natal\r\n- Educação\r\n- Gostos\r\n- Filhos\r\n- Idade / Ano de nascimento\r\n- Pais\r\n- Profissão\r\n- Músicas\r\n- Filmes\r\n\r\nAlém de informações sobre o Museu da Pessoa:\r\n\r\n- O que é o Museu\r\n- Contato com o Museu\r\n- Programa \"Conte Sua História\"\r\n- Apoio ao Museu / Voluntariado\r\n- Quantidade de histórias do Museu\r\n- Fundação do Museu\r\n- Programação do Museu\r\n- Redes sociais do Museu', NOW()),
+(21, 'Apoio ao Museu / Voluntariado', 1, 'O Museu também é feito por voluntários! Se você quiser fazer parte deste time, <a href=\"https://museudapessoa.us10.list-manage.com/subscribe?u=50cf1cee8ddf1afde00b87af7&id=0139059499\" target=\"_blank\"> responda este formulário que entraremos em contato</a>. 😊\r\n\r\nVamos, juntos, transformar histórias de vida de toda e qualquer pessoal em patrimônio da humanidade!\r\n\r\nSe você gostou da nossa causa, <a href=\"https://museudapessoa.org/apoie\" target=\"_blank\">clique aqui para saber mais como nos ajudar</a>. 😊', NOW()),
+(22, 'Contato com o Museu', 1, 'Caso você queira falar diretamente conosco, o e-mail de nossa equipe de atendimento é: <a href=\"mailto:atendimento@museudapessoa.org\" target=\"_blank\">atendimento@museudapessoa.org</a> ✉\r\n\r\nNão sei se você sabe, mas a casa do Museu é na internet, pois somos um Museu Virtual de histórias de vida.\r\n\r\nComo estamos construindo nossa nova plataforma, você pode visitar a gente através de dois canais: <a href=\"https://acervo.museudapessoa.org\" target=\"_blank\">acervo.museudapessoa.org</a> pra você navegar no nosso acervo e o <a href=\"https://museudapessoa.org\" target=\"_blank\">museudapessoa.org</a> para você experimentar nossas exposições em um novo formato.\r\n\r\nA gente também tem uma sede administrativa que fica na Vila Madalena, mas estamos fechados temporariamente para visitação por conta da pandemia de COVID-19. 😥', NOW()),
+(23, 'Quantidade de Histórias do Museu', 1, 'O Museu tem mais de 18 mil histórias de vida! 😳\r\n\r\nSe você quiser acessá-las, <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clique aqui para visitar o site do acervo</a>.', NOW()),
+(24, 'Programação do Museu', 1, 'Você pode conferir a programação do Museu da Pessoa <a href=\"https://museudapessoa.org/programacao/\" target=\"_blank\">clicando aqui</a>. 😉\r\n\r\nAssine a nossa newsletter para receber todas as nossas novidades!', NOW()),
+(25, 'Redes Sociais do Museu', 1, 'Siga o Museu nas suas redes sociais favoritas:\r\n\r\nLinkedIn: <a href=\"https://www.linkedin.com/company/museudapessoa/\" target=\"_blank\">linkedin.com/company/museudapessoa</a>\r\n\r\nInstagram: <a href=\"https://www.instagram.com/museudapessoa/\" target=\"_blank\">instagram.com/museudapessoa</a>\r\n\r\nTwitter: <a href=\"https://twitter.com/museudapessoa\" target=\"_blank\">twitter.com/museudapessoa</a>\r\n\r\nYoutube: <a href=\"https://www.youtube.com/user/museudapessoa\" target=\"_blank\">youtube.com/user/museudapessoa</a>\r\n\r\nFacebook: <a href=\"https://www.facebook.com/museudapessoa/\" target=\"_blank\">facebook.com/museudapessoa</a>', NOW()),
+(26, 'Origem do Nome', 1, NULL, NOW()),
+(27, 'Time de Futebol', 1, 'Eu não acompanho futebol 😢', NOW());
 
 -- DROP TABLE IF EXISTS pessoa;
 CREATE TABLE pessoa (
@@ -113,3 +116,13 @@ CREATE TABLE mensageminicial (
 );
 
 INSERT INTO mensageminicial (id, texto) VALUES (1, '');
+
+CREATE TABLE conversalog (
+  id bigint NOT NULL AUTO_INCREMENT,
+  idpessoa int NOT NULL,
+  idassunto int NOT NULL,
+  idconversa bigint NOT NULL,
+  criacao datetime NOT NULL,
+  PRIMARY KEY (id),
+  KEY conversalog_criacao_idx (criacao)
+);

@@ -3,14 +3,22 @@
 	<div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
 		<form id="form" class="panel panel-default" action="#">
 			<div class="panel-heading">Informações do Assunto</div>
-			<div class="panel-body no-bottom">
+			<div class="panel-body pb-0">
 				<div class="form-group">
 					<label for="id">Id</label>
 					<input id="id" name="id" class="form-control" type="number" min="1" max="9999" value="<%=(item ? item.id : '') %>" <%-(item ? 'readonly="readonly"' : '')%> />
 				</div>
 				<div class="form-group">
 					<label for="nome">Nome</label>
-					<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
+					<input id="nome" name="nome" maxlength="200" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
+				</div>
+				<div class="form-group">
+					<label for="visivel">Assunto Visível no Chat</label>
+					<select id="visivel" name="visivel" class="form-control">
+						<option value="">SELECIONE...</option>
+						<option value="0" <%-((item && !item.visivel) ? 'selected="selected"' : '')%>>NÃO</option>
+						<option value="1" <%-((item && item.visivel) ? 'selected="selected"' : '')%>>SIM</option>
+					</select>
 				</div>
 				<div class="form-group">
 					<label for="respostapadrao">Resposta Padrão</label>
@@ -41,7 +49,11 @@
 			nome: {
 				required: true,
 				minlength: 3,
-				maxlength: 100
+				maxlength: 200
+			},
+
+			visivel: {
+				required: true
 			},
 
 			respostapadrao: {

@@ -41,6 +41,7 @@
 			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return "<a target=\"_blank\" title=\"Editar\" href=\"<%- root %>/assunto/alterar?id=" + row.id + "\" class=\"btn btn-outline btn-primary\"><i class=\"fa fa-nomargin fa-edit\"></i></a> <button title=\"Excluir\" type=\"button\" data-excluir=\"1\" class=\"btn btn-outline btn-danger\"><i class=\"fa fa-nomargin fa-times\"></i></button>"; } },
 			{ title: "Id", "class": "col-min text-right", "type": "number", data: "id" },
 			{ title: "Nome", render: encode, data: "nome" },
+			{ title: "Visível", render: function (v, type, row) { return (v ? "SIM" : "NÃO"); }, data: "visivel" },
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
 		],
 		data: <%- lista %>,

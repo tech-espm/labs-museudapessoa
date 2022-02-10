@@ -1,8 +1,13 @@
 ﻿import app = require("teem");
+import DataUtil = require("../utils/dataUtil");
 
 export = class Assunto {
+	// Manter sincronizado com o arquivo sql/script.sql
+	public static readonly IdAssuntoBoasVindas = 2;
+
 	public id: number;
 	public nome: string;
+	public visivel: number;
 	public respostapadrao: string;
 	public criacao: string;
 
@@ -15,8 +20,12 @@ export = class Assunto {
 			return "Id inválido";
 
 		a.nome = (a.nome || "").normalize().trim();
-		if (a.nome.length < 3 || a.nome.length > 100)
+		if (a.nome.length < 3 || a.nome.length > 200)
 			return "Nome inválido";
+
+		a.visivel = parseInt(a.visivel as any);
+		if (isNaN(a.visivel) || a.visivel < 0 || a.visivel > 1)
+			return "Visibilidade inválida";
 
 		a.respostapadrao = (a.respostapadrao || "").normalize().trim();
 		if (a.respostapadrao.length > 10000)
@@ -27,13 +36,13 @@ export = class Assunto {
 
 	public static listar(): Promise<Assunto[]> {
 		return app.sql.connect(async (sql) => {
-			return (await sql.query("select id, nome, date_format(criacao, '%d/%m/%Y') criacao from assunto order by nome asc")) as Assunto[] || [];
+			return (await sql.query("select id, nome, visivel, date_format(criacao, '%d/%m/%Y') criacao from assunto order by nome asc")) as Assunto[] || [];
 		});
 	}
 
 	public static obter(id: number): Promise<Assunto> {
 		return app.sql.connect(async (sql) => {
-			const lista = (await sql.query("select id, nome, respostapadrao, date_format(criacao, '%d/%m/%Y') from assunto where id = ?", [id])) as Assunto[];
+			const lista = (await sql.query("select id, nome, visivel, respostapadrao, date_format(criacao, '%d/%m/%Y') from assunto where id = ?", [id])) as Assunto[];
 			return (lista && lista[0]) || null;
 		});
 	}
@@ -45,7 +54,7 @@ export = class Assunto {
 
 		return app.sql.connect(async (sql) => {
 			try {
-				await sql.query("insert into assunto (id, nome, respostapadrao, criacao) values (?, ?, ?, now())", [a.id, a.nome, a.respostapadrao]);
+				await sql.query("insert into assunto (id, nome, visivel, respostapadrao, criacao) values (?, ?, ?, ?, ?)", [a.id, a.nome, a.visivel, a.respostapadrao, DataUtil.horarioDeBrasiliaISOComHorario()]);
 				return null;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
@@ -62,7 +71,7 @@ export = class Assunto {
 
 		return app.sql.connect(async (sql) => {
 			try {
-				await sql.query("update assunto set nome = ?, respostapadrao = ? where id = ?", [a.nome, a.respostapadrao, a.id]);
+				await sql.query("update assunto set nome = ?, visivel = ?, respostapadrao = ? where id = ?", [a.nome, a.visivel, a.respostapadrao, a.id]);
 				return (sql.affectedRows ? null : "Assunto não encontrado");
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")

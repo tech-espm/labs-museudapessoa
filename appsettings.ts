@@ -14,7 +14,9 @@ export = {
 		port: parseInt(process.env.app_sqlPool_port),
 		user: process.env.app_sqlPool_user,
 		password: process.env.app_sqlPool_password,
-		database: process.env.app_sqlPool_database
+		database: process.env.app_sqlPool_database,
+		supportBigNumbers: true,
+		bigNumberStrings: true
 	},
 	usuarioHashSenhaPadrao: process.env.app_usuarioHashSenhaPadrao,
 	usuarioHashId: parseInt(process.env.app_usuarioHashId, 16),

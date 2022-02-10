@@ -33,6 +33,14 @@ class PessoaRoute {
 		else
 			res.render("pessoa/listar", { titulo: "Gerenciar Pessoas", usuario: u, lista: JSON.stringify(await Pessoa.listar()) });
 	}
+
+	public static async log(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req);
+		if (!u)
+			res.redirect(app.root + "/acesso");
+		else
+			res.render("pessoa/log", { titulo: "Log de Mensagens", usuario: u, lista: JSON.stringify(await Pessoa.logMensagens()) });
+	}
 }
 
 export = PessoaRoute;

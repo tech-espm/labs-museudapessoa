@@ -3,6 +3,7 @@ import { randomBytes } from "crypto";
 import GeradorHash = require("../utils/geradorHash");
 import appsettings = require("../appsettings");
 import intToHex = require("../utils/intToHex");
+import DataUtil = require("../utils/dataUtil");
 
 export = class Usuario {
 
@@ -195,7 +196,7 @@ export = class Usuario {
 
 		await app.sql.connect(async (sql) => {
 			try {
-				await sql.query("insert into usuario (login, nome, idperfil, senha, criacao) values (?, ?, ?, ?, now())", [u.login, u.nome, u.idperfil, appsettings.usuarioHashSenhaPadrao]);
+				await sql.query("insert into usuario (login, nome, idperfil, senha, criacao) values (?, ?, ?, ?, ?)", [u.login, u.nome, u.idperfil, appsettings.usuarioHashSenhaPadrao, DataUtil.horarioDeBrasiliaISOComHorario()]);
 			} catch (e) {
 				if (e.code) {
 					switch (e.code) {

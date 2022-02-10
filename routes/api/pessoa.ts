@@ -54,20 +54,28 @@ class PessoaApiRoute {
 			res.sendStatus(204);
 	}
 
-	@app.route.methodName("/iniciarConversa/:n?")
-	public static async iniciarConversa(req: app.Request, res: app.Response) {
-		res.json(await Pessoa.iniciarConversa(req.params["n"]));
-	}
+	//@app.route.methodName("/iniciarConversa/:n?")
+	//public static async iniciarConversa(req: app.Request, res: app.Response) {
+	//	res.json(await Pessoa.iniciarConversa(req.params["n"]));
+	//}
 
 	@app.http.post()
 	public static async enviarMensagem(req: app.Request, res: app.Response) {
-		const idconversa = req.query["idconversa"] as string;
-		const idpessoa = parseInt(req.query["idpessoa"] as string);
-		const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
-		if (!idconversa || isNaN(idpessoa) || idpessoa <= 0 || !mensagem)
+		const idpessoa = parseInt(req.body && req.body.idpessoa);
+		//const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
+		const idassunto = parseInt(req.body && req.body.idassunto);
+
+		let idconversa: bigint;
+		try {
+			idconversa = (req.body && req.body.idconversa) ? BigInt("0x" + req.body.idconversa) : BigInt(0);
+		} catch (ex: any) {
+			idconversa = BigInt(0);
+		}
+
+		if (isNaN(idpessoa) || idpessoa <= 0 || isNaN(idassunto) || idassunto <= 0 || idconversa <= 0)
 			res.status(400).json("Dados inválidos");
 		else
-			res.json(await Pessoa.enviarMensagem(idconversa, idpessoa, mensagem));
+			res.json(await Pessoa.logarMensagem(idpessoa, idassunto, idconversa));
 	}
 }
 

@@ -1,4 +1,4 @@
-import { randomBytes, pbkdf2 } from "crypto";
+import { createHash, randomBytes, pbkdf2 } from "crypto";
 
 export = class GeradorHash {
 	private static readonly SALT_BYTE_SIZE = 33;
@@ -40,5 +40,9 @@ export = class GeradorHash {
 				resolve(derivedKey.toString("base64") === senhaHash);
 			});
 		});
+	}
+
+	public static sha256(x: string): string {
+		return createHash("sha256").update(x).digest("hex");
 	}
 }

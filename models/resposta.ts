@@ -1,4 +1,5 @@
 ﻿import app = require("teem");
+import DataUtil = require("../utils/dataUtil");
 
 export = class Resposta {
 	public id: number;
@@ -31,7 +32,7 @@ export = class Resposta {
 			return res;
 
 		try {
-			await sql.query("insert into resposta (idpessoa, idassunto, texto, criacao) values (?, ?, ?, now())", [r.idpessoa, r.idassunto, r.texto]);
+			await sql.query("insert into resposta (idpessoa, idassunto, texto, criacao) values (?, ?, ?, ?)", [r.idpessoa, r.idassunto, r.texto, DataUtil.horarioDeBrasiliaISOComHorario()]);
 			r.id = await sql.scalar("select last_insert_id()") as number;
 		} catch (e) {
 			if (e.code) {
