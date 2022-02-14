@@ -574,7 +574,7 @@
 							$msg.find(".mensagem-eu img").remove();
 							$msg.find(".mensagem-eu").removeClass("espera");
 							adicionarMensagem(conversa[i].resposta, nomepessoa);
-						}, Math.max(800 - delta, 0));
+						}, Math.max(1500 - delta, 0));
 					},
 					error: function () {
 						conversaAtiva = false;
