@@ -5,24 +5,50 @@
 //import { IamAuthenticator } from "ibm-watson/auth";
 import app = require("teem");
 import appsettings = require("../appsettings");
-import Assunto = require("./assunto");
-import Resposta = require("./resposta");
 import ajustarNome = require("../utils/ajustarNome");
 import DataUtil = require("../utils/dataUtil");
 
-export = class Pessoa {
+interface AssuntoPessoa {
+	codpergunta: string;
+	pergunta: string;
+	resposta: string;
+}
+
+interface Pessoa {
+	id: number;
+	nome: string;
+	nomeajustado: string;
+	feminino: number;
+	criacao: string;
+	versaoimagem: number;
+	corfundo: string;
+	corbotao: string;
+	cortextobotao: string;
+	htmlmensagem: string;
+	htmlinicial: string;
+	boasvindas: string;
+
+	// Não vem da tela, só do banco
+	jsonassuntos: string;
+	assuntos: AssuntoPessoa[];
+
+	// Não vem do banco, só da tela
+	codpergunta: string[];
+	pergunta: string[];
+	resposta: string[];
+}
+
+class Pessoa {
 	private static ultimoIdConversa = 0;
 
-	public id: number;
-	public nome: string;
-	public nomeajustado: string;
-	public feminino: number;
-	public criacao: string;
-	public respostas: Resposta[];
-
-	private static validar(p: Pessoa): string {
+	private static validar(p: Pessoa, criacao: boolean): string | null {
 		if (!p)
 			return "Pessoa inválida";
+
+		if (!criacao) {
+			if (isNaN(p.id = parseInt(p.id as any)))
+				return "Id inválido";
+		}
 
 		p.nome = (p.nome || "").normalize().trim();
 		if (p.nome.length < 3 || p.nome.length > 100)
@@ -36,28 +62,90 @@ export = class Pessoa {
 		if (isNaN(p.feminino) || p.feminino < 0 || p.feminino > 1)
 			p.feminino = 1;
 
-		if (!p.respostas)
-			p.respostas = [];
-		for (let i = p.respostas.length - 1; i >= 0; i--) {
-			if (!p.respostas[i])
-				return "Resposta inválida";
+		p.corfundo = (p.corfundo || "").normalize().trim();
+		if (p.corfundo.length !== 7)
+			return "Cor do fundo inválida";
+
+		p.corbotao = (p.corbotao || "").normalize().trim();
+		if (p.corbotao.length !== 7)
+			return "Cor do botão inválida";
+
+		p.cortextobotao = (p.cortextobotao || "").normalize().trim();
+		if (p.cortextobotao.length !== 7)
+			return "Cor do fundo inválida";
+
+		p.htmlmensagem = (p.htmlmensagem || "").normalize().trim();
+		if (!p.htmlmensagem)
+			return "Mensagem inválida";
+
+		p.htmlinicial = (p.htmlinicial || "").normalize().trim();
+		if (!p.htmlinicial)
+			return "Texto inicial inválido";
+
+		if (!p.codpergunta)
+			return "Códigos de pergunta faltando";
+
+		if (!p.pergunta)
+			return "Perguntas faltando";
+
+		if (!p.resposta)
+			return "Respostas faltando";
+
+		if (!Array.isArray(p.codpergunta))
+			p.codpergunta = [p.codpergunta as any];
+
+		if (!Array.isArray(p.pergunta))
+			p.pergunta = [p.pergunta as any];
+
+		if (!Array.isArray(p.resposta))
+			p.resposta = [p.resposta as any];
+
+		if (p.codpergunta.length !== p.pergunta.length || p.codpergunta.length !== p.resposta.length)
+			return "Quantidades diferentes de códigos de pergunta, perguntas e respostas";
+
+		let assuntos: AssuntoPessoa[] = [];
+
+		for (let i = 0; i < p.codpergunta.length; i++) {
+			p.codpergunta[i] = (p.codpergunta[i] || "").normalize().trim();
+			if (!p.codpergunta[i] || p.codpergunta[i].length > 45)
+				return `Código da pergunta ${(i + 1)} inválido`;
+
+			p.pergunta[i] = (p.pergunta[i] || "").normalize().trim();
+			if (!p.pergunta[i] || p.pergunta[i].length > 250)
+				return `Pergunta ${(i + 1)} inválida`;
+
+			p.resposta[i] = (p.resposta[i] || "").normalize().trim();
+			if (!p.resposta[i] || p.resposta[i].length > 65000)
+				return `Resposta ${(i + 1)} inválida`;
+
+			assuntos.push({
+				codpergunta: p.codpergunta[i],
+				pergunta: p.pergunta[i],
+				resposta: p.resposta[i]
+			});
 		}
+
+		p.jsonassuntos = JSON.stringify(assuntos);
+
+		p.boasvindas = (p.boasvindas || "").normalize().trim();
+		if (!p.boasvindas || p.boasvindas.length > 65000)
+			return "Mensagem de boas vindas inválida";
 
 		return null;
 	}
 
 	public static listar(): Promise<Pessoa[]> {
 		return app.sql.connect(async (sql) => {
-			return (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa order by nome asc")) as Pessoa[] || [];
+			return (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao, versaoimagem from pessoa order by nome asc")) as Pessoa[] || [];
 		});
 	}
 
-	public static obter(id: number): Promise<Pessoa> {
+	public static obter(id: number): Promise<Pessoa | null> {
 		return app.sql.connect(async (sql) => {
-			const lista = (await sql.query("select id, nome, nomeajustado, feminino, date_format(criacao, '%d/%m/%Y') criacao from pessoa where id = ?", [id])) as Pessoa[];
+			const lista = (await sql.query("select id, nome, nomeajustado, feminino, versaoimagem, corfundo, corbotao, cortextobotao, htmlmensagem, htmlinicial, jsonassuntos, boasvindas from pessoa where id = ?", [id])) as Pessoa[];
 
 			if (lista && lista.length) {
-				lista[0].respostas = await Resposta.listar(sql, id);
+				lista[0].assuntos = JSON.parse(lista[0].jsonassuntos);
 				return lista[0];
 			}
 
@@ -65,16 +153,37 @@ export = class Pessoa {
 		});
 	}
 
-	public static criar(p: Pessoa): Promise<string> {
-		const erro = Pessoa.validar(p);
+	public static criar(p: Pessoa, fundo: app.UploadedFile | null, avatar: app.UploadedFile | null, imagem: app.UploadedFile | null): Promise<string | null> {
+		const erro = Pessoa.validar(p, true);
 		if (erro)
 			return Promise.resolve(erro);
+
+		if (!fundo)
+			return Promise.resolve("Fundo faltando");
+		if (fundo.mimetype !== "image/jpeg" && fundo.mimetype !== "image/png")
+			return Promise.resolve("Fundo com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+		if (fundo.buffer.length > 1024 * 1024)
+			return Promise.resolve("O fundo deve ter no máximo 1024 KB");
+
+		if (!avatar)
+			return Promise.resolve("Avatar faltando");
+		if (avatar.mimetype !== "image/jpeg" && avatar.mimetype !== "image/png")
+			return Promise.resolve("Avatar com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+		if (avatar.buffer.length > 512 * 1024)
+			return Promise.resolve("O avatar deve ter no máximo 512 KB");
+
+		if (!imagem)
+			return Promise.resolve("Imagem faltando");
+		if (imagem.mimetype !== "image/jpeg" && imagem.mimetype !== "image/png")
+			return Promise.resolve("Imagem com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+		if (imagem.buffer.length > 512 * 1024)
+			return Promise.resolve("A imagem deve ter no máximo 512 KB");
 
 		return app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
 			try {
-				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao) values (?, ?, ?, ?)", [p.nome, p.nomeajustado, p.feminino, DataUtil.horarioDeBrasiliaISOComHorario()]);
+				await sql.query("insert into pessoa (nome, nomeajustado, feminino, criacao, versaoimagem, corfundo, corbotao, cortextobotao, htmlmensagem, htmlinicial, jsonassuntos, boasvindas) values (?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)", [p.nome, p.nomeajustado, p.feminino, DataUtil.horarioDeBrasiliaISOComHorario(), p.corfundo, p.corbotao, p.cortextobotao, p.htmlmensagem, p.htmlinicial, p.jsonassuntos, p.boasvindas]);
 				p.id = await sql.scalar("select last_insert_id()") as number;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
@@ -82,14 +191,9 @@ export = class Pessoa {
 				throw e;
 			}
 
-			if (p.respostas) {
-                for (let i = 0; i < p.respostas.length; i++) {
-                    p.respostas[i].idpessoa = p.id;
-					const erro = await Resposta.criar(sql, p.respostas[i]);
-					if (erro)
-						return erro;
-                }
-            }
+			await app.fileSystem.saveUploadedFile(`public/img/pessoa/fundo${p.id}.jpg`, fundo);
+			await app.fileSystem.saveUploadedFile(`public/img/pessoa/avatar${p.id}.jpg`, avatar);
+			await app.fileSystem.saveUploadedFile(`public/img/pessoa/imagem${p.id}.jpg`, imagem);
 
 			await sql.commit();
 
@@ -97,16 +201,37 @@ export = class Pessoa {
 		});
 	}
 
-	public static alterar(p: Pessoa): Promise<string> {
-		const erro = Pessoa.validar(p);
+	public static alterar(p: Pessoa, fundo?: app.UploadedFile | null, avatar?: app.UploadedFile | null, imagem?: app.UploadedFile | null): Promise<string | null> {
+		const erro = Pessoa.validar(p, false);
 		if (erro)
 			return Promise.resolve(erro);
+
+		if (fundo) {
+			if (fundo.mimetype !== "image/jpeg" && fundo.mimetype !== "image/png")
+				return Promise.resolve("Fundo com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+			if (fundo.buffer.length > 1024 * 1024)
+				return Promise.resolve("O fundo deve ter no máximo 1024 KB");
+		}
+
+		if (avatar) {
+			if (avatar.mimetype !== "image/jpeg" && avatar.mimetype !== "image/png")
+				return Promise.resolve("Avatar com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+			if (avatar.buffer.length > 512 * 1024)
+				return Promise.resolve("O avatar deve ter no máximo 512 KB");
+		}
+
+		if (imagem) {
+			if (imagem.mimetype !== "image/jpeg" && imagem.mimetype !== "image/png")
+				return Promise.resolve("Imagem com tipo inválido (deve ser uma imagem PNG ou JPEG)");
+			if (imagem.buffer.length > 512 * 1024)
+				return Promise.resolve("A imagem deve ter no máximo 512 KB");
+		}
 
 		return app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
 			try {
-				await sql.query("update pessoa set nome = ?, nomeajustado = ?, feminino = ? where id = ?", [p.nome, p.nomeajustado, p.feminino, p.id]);
+				await sql.query("update pessoa set nome = ?, nomeajustado = ?, feminino = ?, corfundo = ?, corbotao = ?, cortextobotao = ?, htmlmensagem = ?, htmlinicial = ?, jsonassuntos = ?, boasvindas = ?" + ((fundo || avatar || imagem) ? ", versaoimagem = versaoimagem + 1" : "") + " where id = ?", [p.nome, p.nomeajustado, p.feminino, p.corfundo, p.corbotao, p.cortextobotao, p.htmlmensagem, p.htmlinicial, p.jsonassuntos, p.boasvindas, p.id]);
 				if (!sql.affectedRows)
 					return "Pessoa não encontrada";
 			} catch (e) {
@@ -115,39 +240,12 @@ export = class Pessoa {
 				throw e;
 			}
 
-			const respostasExistentes = await sql.query("SELECT id FROM resposta WHERE idpessoa = ?", [p.id]) as Resposta[];
-
-			const respostasNovas = p.respostas.slice();
-
-            // Busca as respostas existentes para atualizar
-            for (let e = 0; e < respostasExistentes.length; e++) {
-                const idExistente = respostasExistentes[e].id;
-
-                for (let n = 0; n < respostasNovas.length; n++) {
-                    if (idExistente === respostasNovas[n].id) {
-                        respostasNovas[n].idpessoa = p.id;
-						const erro = await Resposta.alterar(sql, respostasNovas[n]);
-						if (erro)
-							return erro;
-                        respostasExistentes.splice(e, 1);
-                        e--;
-                        respostasNovas.splice(n, 1);
-                        break;
-                    }
-                }
-            }
-
-            // Exclui as respostas antigas que não vieram no array novo
-            for (let e = 0; e < respostasExistentes.length; e++)
-                await Resposta.excluir(sql, respostasExistentes[e].id, p.id);
-
-            // Cria as respostas novas
-            for (let i = 0; i < respostasNovas.length; i++) {
-                respostasNovas[i].idpessoa = p.id;
-				const erro = await Resposta.criar(sql, respostasNovas[i]);
-				if (erro)
-					return erro;
-            }
+			if (fundo)
+				await app.fileSystem.saveUploadedFile(`public/img/pessoa/fundo${p.id}.jpg`, fundo);
+			if (avatar)
+				await app.fileSystem.saveUploadedFile(`public/img/pessoa/avatar${p.id}.jpg`, avatar);
+			if (imagem)
+				await app.fileSystem.saveUploadedFile(`public/img/pessoa/imagem${p.id}.jpg`, imagem);
 
 			await sql.commit();
 
@@ -155,106 +253,26 @@ export = class Pessoa {
 		});
 	}
 
-	public static excluir(id: number): Promise<string> {
+	public static excluir(id: number): Promise<string | null> {
 		return app.sql.connect(async (sql) => {
+			await sql.beginTransaction();
+
 			await sql.query("delete from pessoa where id = ?", [id]);
-			return (sql.affectedRows ? null : "Pessoa não encontrada");
+
+			if (!sql.affectedRows)
+				return "Pessoa não encontrada";
+
+			await app.fileSystem.deleteFile(`public/img/pessoa/fundo${id}.jpg`);
+			await app.fileSystem.deleteFile(`public/img/pessoa/avatar${id}.jpg`);
+			await app.fileSystem.deleteFile(`public/img/pessoa/imagem${id}.jpg`);
+
+			await sql.commit();
+
+			return null;
 		});
 	}
 
-	/*
-	public static async iniciarConversa(nomepessoa: string): Promise<{ idconversa: string, idpessoa: number, nomepessoa: string, resposta: string }> {
-		// Pega o idconversa da API da IBM, e a resposta da mensagem de boas vindas,
-		// que deveria ser o id de um assunto...
-		const assistant = new AssistantV2({
-			version: appsettings.assistantVersion,
-			authenticator: new IamAuthenticator({
-				apikey: appsettings.serviceCredentials.apikey,
-			}),
-			url: appsettings.serviceCredentials.url,
-		});
-		const respostaSessao = await assistant.createSession({ assistantId: appsettings.assistantId });
-		let idconversa = respostaSessao.result.session_id;
-		// Como a conversa é simples, o diálogo só tem um nível de profundidade,
-		// daria para utilizar a versão sem estado, mais simples???
-		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateless
-		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateful
-		const respostaMensagem = await assistant.message({
-			assistantId: appsettings.assistantId,
-			sessionId: idconversa,
-			input: { message_type: "text", text: "" }
-		});
-		let resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && (respostaMensagem.result.output.generic[0] as AssistantV2.RuntimeResponseGenericRuntimeResponseTypeText).text) || "");
-		const respostaInt = parseInt(resposta);
-
-		let idpessoa = 0;
-
-		await app.sql.connect(async (sql) => {
-			let lista: Pessoa[] = null;
-
-			if (nomepessoa)
-				nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ");
-
-			// Novo requisito: não teremos mais chat aleatório
-			if (!nomepessoa)
-				nomepessoa = "mani";
-
-			if (nomepessoa)
-				lista = (await sql.query("select id, nome from pessoa where nomeajustado = ?", [nomepessoa])) as Pessoa[];
-
-			if (!lista || !lista.length)
-				lista = (await sql.query("select id, nome from pessoa order by id asc")) as Pessoa[];
-
-			if (lista && lista.length) {
-				const i = ((Math.random() * lista.length * 100) | 0) % lista.length;
-				idpessoa = lista[i].id;
-				nomepessoa = lista[i].nome;
-				resposta = (isNaN(respostaInt) ? null : await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]));
-			}
-		});
-
-		return {
-			idconversa: idconversa,
-			idpessoa: idpessoa,
-			nomepessoa: nomepessoa,
-			resposta: resposta || (`Olá! Me chamo ${nomepessoa}. Vamos conversar? 😊`)
-		};
-	}
-
-	public static async enviarMensagem(idconversa: string, idpessoa: number, mensagem: string): Promise<string> {
-		// Envia a mensagem para a API da IBM, usando idconversa,
-		// e pega a resposta, que deveria ser o id de um assunto...
-		const assistant = new AssistantV2({
-			version: appsettings.assistantVersion,
-			authenticator: new IamAuthenticator({
-				apikey: appsettings.serviceCredentials.apikey,
-			}),
-			url: appsettings.serviceCredentials.url,
-		});
-		// Como a conversa é simples, o diálogo só tem um nível de profundidade,
-		// daria para utilizar a versão sem estado, mais simples???
-		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateless
-		// https://cloud.ibm.com/apidocs/assistant/assistant-v2?code=node#send-user-input-to-assistant-stateful
-		const respostaMensagem = await assistant.message({
-			assistantId: appsettings.assistantId,
-			sessionId: idconversa,
-			input: { message_type: "text", text: mensagem }
-		});
-		const resposta = ((respostaMensagem.result && respostaMensagem.result.output && respostaMensagem.result.output.generic && respostaMensagem.result.output.generic[0] && (respostaMensagem.result.output.generic[0] as AssistantV2.RuntimeResponseGenericRuntimeResponseTypeText).text) || ""),
-			respostaInt = parseInt(resposta);
-		if (resposta && isNaN(respostaInt))
-			return resposta;
-
-		return ((!isNaN(respostaInt) && await app.sql.connect(async (sql) => {
-			return (await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, respostaInt]) ||
-				await sql.scalar("select respostapadrao from assunto where id = ?", [respostaInt]) ||
-				await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = 1", [idpessoa]) ||
-				await sql.scalar("select respostapadrao from assunto where id = 1"));
-		})) || "Não sei o que dizer sobre isso 😥\nPoderia falar de novo, por favor, de outra forma? 😊");
-	}
-	*/
-
-	public static obterConversa(nomepessoa: string): Promise<{ info: { id: number, nome: string, boasVindas: string, idconversa: string }, conversa: { id: number, pergunta: string, resposta: string }[] }> {
+	public static obterConversa(nomepessoa: string): Promise<{ pessoa: Pessoa, idconversa: string }> {
 		return app.sql.connect(async (sql) => {
 			if (nomepessoa)
 				nomepessoa = nomepessoa.normalize().trim().toLowerCase().replace(/\+/g, " ");
@@ -263,45 +281,19 @@ export = class Pessoa {
 			if (!nomepessoa)
 				nomepessoa = "mani";
 
-			let pessoas: { id: number, nome: string }[] = null;
+			let ids: { id: number }[] = null;
 
 			if (nomepessoa)
-				pessoas = (await sql.query("select id, nome from pessoa where nomeajustado = ?", [nomepessoa])) as Pessoa[];
+				ids = (await sql.query("select id from pessoa where nomeajustado = ?", [nomepessoa])) as Pessoa[];
 
 			let idpessoa: number;
 
-			if (!pessoas || !pessoas.length) {
-				pessoas = (await sql.query("select id, nome from pessoa order by id asc")) as Pessoa[];
-				const i = ((Math.random() * pessoas.length * 100) | 0) % pessoas.length;
-				idpessoa = pessoas[i].id;
-				nomepessoa = pessoas[i].nome;
+			if (!ids || !ids.length) {
+				ids = (await sql.query("select id from pessoa order by id asc")) as Pessoa[];
+				const i = ((Math.random() * ids.length * 100) | 0) % ids.length;
+				idpessoa = ids[i].id;
 			} else {
-				idpessoa = pessoas[0].id;
-				nomepessoa = pessoas[0].nome;
-			}
-
-			let boasVindas: string = await sql.scalar("select texto from resposta where idpessoa = ? and idassunto = ?", [idpessoa, Assunto.IdAssuntoBoasVindas]);
-
-			if (!boasVindas)
-				boasVindas = await sql.scalar("select respostapadrao from assunto where id = ?", [Assunto.IdAssuntoBoasVindas]);
-
-			const conversaPadrao: { id: number, pergunta: string, resposta: string }[] = await sql.query("select id, nome pergunta, respostapadrao resposta from assunto where visivel = 1 and respostapadrao is not null and length(respostapadrao) > 0");
-
-			const conversaPessoa: { id: number, pergunta: string, resposta: string }[] = await sql.query("select a.id, a.nome pergunta, r.texto resposta from resposta r inner join assunto a on a.id = r.idassunto and a.visivel = 1 where r.idpessoa = ?", [idpessoa]);
-
-			for (let i = conversaPadrao.length - 1; i >= 0; i--) {
-				const p = conversaPadrao[i];
-
-				let jaExiste = false;
-				for (let j = conversaPessoa.length - 1; j >= 0; j--) {
-					if (p.id === conversaPessoa[j].id) {
-						jaExiste = true;
-						break;
-					}
-				}
-
-				if (!jaExiste)
-					conversaPessoa.push(p);
+				idpessoa = ids[0].id;
 			}
 
 			// Os ids só repetirão se ocorrerem mais de 16 requisições no mesmo milissegundo,
@@ -324,27 +316,24 @@ export = class Pessoa {
 			idconversa += BigInt(agora);
 
 			return {
-				info: {
-					id: idpessoa,
-					nome: nomepessoa,
-					boasVindas,
-					idconversa: idconversa.toString(16)
-				},
-				conversa: conversaPessoa
+				pessoa: await Pessoa.obter(idpessoa),
+				idconversa: idconversa.toString(16)
 			};
 		});
 	}
 
-	public static logarMensagem(idpessoa: number, idassunto: number, idconversa: bigint): Promise<string> {
+	public static logarMensagem(idpessoa: number, idconversa: bigint, codpergunta: string): Promise<string | null> {
 		return app.sql.connect(async (sql) => {
-			await sql.query("insert into conversalog (idpessoa, idassunto, idconversa, criacao) values (?, ?, ?, ?)", [idpessoa, idassunto, idconversa, DataUtil.horarioDeBrasiliaISOComHorario()]);
+			await sql.query("insert into conversalogindividual (idpessoa, idconversa, codpergunta, criacao) values (?, ?, ?, ?)", [idpessoa, idconversa, codpergunta, DataUtil.horarioDeBrasiliaISOComHorario()]);
 			return null;
 		});
 	}
 
 	public static logMensagens(): Promise<any[]> {
 		return app.sql.connect(async (sql) => {
-			return await sql.query("select p.nome pessoa, a.nome assunto, hex(l.idconversa) idconversa, date_format(l.criacao, '%d/%m/%Y %H:%i') criacao from conversalog l inner join pessoa p on p.id = l.idpessoa inner join assunto a on a.id = l.idassunto");
+			return await sql.query("select p.nome pessoa, hex(l.idconversa) idconversa, l.codpergunta, date_format(l.criacao, '%d/%m/%Y %H:%i') criacao from conversalogindividual l left join pessoa p on p.id = l.idpessoa");
 		});
 	}
-};
+}
+
+export = Pessoa;

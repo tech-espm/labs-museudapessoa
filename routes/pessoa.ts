@@ -9,7 +9,7 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/alterar", { titulo: "Criar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: null });
+			res.render("pessoa/editar", { titulo: "Criar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: null });
 	}
 
 	public static async alterar(req: app.Request, res: app.Response) {
@@ -20,9 +20,9 @@ class PessoaRoute {
 			let id = parseInt(req.query["id"] as string);
 			let item: Pessoa = null;
 			if (isNaN(id) || !(item = await Pessoa.obter(id)))
-				res.render("home/nao-encontrado", { usuario: u });
+				res.render("index/nao-encontrado", { usuario: u });
 			else
-				res.render("pessoa/alterar", { titulo: "Editar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: item });
+				res.render("pessoa/editar", { titulo: "Editar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: item });
 		}
 	}
 
@@ -31,7 +31,7 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/listar", { titulo: "Gerenciar Pessoas", usuario: u, lista: JSON.stringify(await Pessoa.listar()) });
+			res.render("pessoa/listar", { titulo: "Gerenciar Pessoas", layout: "layout-tabela", usuario: u, datatables: true, lista: await Pessoa.listar() });
 	}
 
 	public static async log(req: app.Request, res: app.Response) {
@@ -39,7 +39,7 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/log", { titulo: "Log de Mensagens", usuario: u, lista: JSON.stringify(await Pessoa.logMensagens()) });
+			res.render("pessoa/log", { titulo: "Log de Mensagens", layout: "layout-tabela", usuario: u, datatables: true, lista: JSON.stringify(await Pessoa.logMensagens()) });
 	}
 }
 

@@ -77,12 +77,18 @@ CREATE TABLE pessoa (
   nomeajustado varchar(100) NOT NULL,
   feminino tinyint(4) NOT NULL,
   criacao datetime NOT NULL,
+  versaoimagem int NULL,
+  corfundo varchar(7) NOT NULL,
+  corbotao varchar(7) NOT NULL,
+  cortextobotao varchar(7) NOT NULL,
+  htmlmensagem text NOT NULL,
+  htmlinicial mediumtext NOT NULL,
+  jsonassuntos mediumtext NOT NULL,
+  boasvindas text NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY nome_UN (nome),
   KEY nomeajustado_idx (nomeajustado)
 );
-
-INSERT INTO pessoa (nome, nomeajustado, feminino, criacao) VALUES ('Mani', 'mani', 1, NOW());
 
 -- DROP TABLE IF EXISTS resposta;
 CREATE TABLE resposta (
@@ -122,6 +128,16 @@ CREATE TABLE conversalog (
   idpessoa int NOT NULL,
   idassunto int NOT NULL,
   idconversa bigint NOT NULL,
+  criacao datetime NOT NULL,
+  PRIMARY KEY (id),
+  KEY conversalog_criacao_idx (criacao)
+);
+
+CREATE TABLE conversalogindividual (
+  id bigint NOT NULL AUTO_INCREMENT,
+  idpessoa int NOT NULL,
+  idconversa bigint NOT NULL,
+  codpergunta varchar(45) NOT NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   KEY conversalog_criacao_idx (criacao)

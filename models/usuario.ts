@@ -33,7 +33,7 @@ export = class Usuario {
 			}
 			return null;
 		} else {
-			let id = parseInt(cookieStr.substr(0, 8), 16) ^ appsettings.usuarioHashId;
+			let id = parseInt(cookieStr.substring(0, 8), 16) ^ appsettings.usuarioHashId;
 			let usuario: Usuario = null;
 
 			await app.sql.connect(async (sql) => {
@@ -121,7 +121,7 @@ export = class Usuario {
 	}
 
 	public async alterarPerfil(res: app.Response, nome: string, senhaAtual: string, novaSenha: string): Promise<string> {
-		nome = (nome || "").normalize().trim().toUpperCase();
+		nome = (nome || "").normalize().trim();
 		if (nome.length < 3 || nome.length > 100)
 			return "Nome inválido";
 
@@ -158,7 +158,7 @@ export = class Usuario {
 	}
 
 	private static validar(u: Usuario): string {
-		u.nome = (u.nome || "").normalize().trim().toUpperCase();
+		u.nome = (u.nome || "").normalize().trim();
 		if (u.nome.length < 3 || u.nome.length > 100)
 			return "Nome inválido";
 

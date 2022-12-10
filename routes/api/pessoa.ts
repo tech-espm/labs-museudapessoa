@@ -18,12 +18,13 @@ class PessoaApiRoute {
 	}
 
 	@app.http.post()
+	@app.route.formData()
 	public static async criar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 		const p = req.body as Pessoa,
-			r = await Pessoa.criar(p);
+			r = await Pessoa.criar(p, req.uploadedFiles.fundo, req.uploadedFiles.avatar, req.uploadedFiles.imagem);
 		if (r)
 			res.status(400).json(r);
 		else
@@ -31,12 +32,13 @@ class PessoaApiRoute {
 	}
 
 	@app.http.post()
+	@app.route.formData()
 	public static async alterar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 		const p = req.body as Pessoa,
-			r = await Pessoa.alterar(p);
+			r = await Pessoa.alterar(p, req.uploadedFiles.fundo, req.uploadedFiles.avatar, req.uploadedFiles.imagem);
 		if (r)
 			res.status(400).json(r);
 		else
@@ -62,8 +64,7 @@ class PessoaApiRoute {
 	@app.http.post()
 	public static async enviarMensagem(req: app.Request, res: app.Response) {
 		const idpessoa = parseInt(req.body && req.body.idpessoa);
-		//const mensagem = ((req.body && req.body.mensagem) || "").toString().normalize().trim();
-		const idassunto = parseInt(req.body && req.body.idassunto);
+		const codpergunta: string = (req.body && req.body.codpergunta);
 
 		let idconversa: bigint;
 		try {
@@ -72,10 +73,10 @@ class PessoaApiRoute {
 			idconversa = BigInt(0);
 		}
 
-		if (isNaN(idpessoa) || idpessoa <= 0 || isNaN(idassunto) || idassunto <= 0 || idconversa <= 0)
+		if (isNaN(idpessoa) || idpessoa <= 0 || idconversa <= 0 || !codpergunta || codpergunta.length > 45)
 			res.status(400).json("Dados inválidos");
 		else
-			res.json(await Pessoa.logarMensagem(idpessoa, idassunto, idconversa));
+			res.json(await Pessoa.logarMensagem(idpessoa, idconversa, codpergunta));
 	}
 }
 

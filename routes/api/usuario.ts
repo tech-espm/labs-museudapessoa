@@ -51,6 +51,7 @@ class UsuarioApiRoute {
 		jsonRes(res, 400, (u && !isNaN(u.id)) ? (id === u.id ? "Um usuário não pode alterar a si próprio" : await Usuario.alterar(u)) : "Dados inválidos");
 	}
 
+	@app.http.delete()
 	public static async excluir(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res, true);
 		if (!u)

@@ -19,7 +19,7 @@ class AssuntoRoute {
 			let id = parseInt(req.query["id"] as string);
 			let item: Assunto = null;
 			if (isNaN(id) || !(item = await Assunto.obter(id)))
-				res.render("home/nao-encontrado", { usuario: u });
+				res.render("index/nao-encontrado", { usuario: u });
 			else
 				res.render("assunto/alterar", { titulo: "Editar Assunto", usuario: u, item: item });
 		}

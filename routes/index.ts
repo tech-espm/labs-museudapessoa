@@ -9,12 +9,12 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("home/dashboard", { titulo: "Dashboard", usuario: u });
+			res.render("index/index", { titulo: "Dashboard", usuario: u });
 	}
 
-	@app.route.methodName("/chat/:n?")
-	public static async chat(req: app.Request, res: app.Response) {
-		res.render("home/chat", {
+	@app.route.methodName("/assistente/:n?")
+	public static async assistente(req: app.Request, res: app.Response) {
+		res.render("index/chat", {
 			layout: "layout-externo",
 			nomepessoa: (req.params["n"] || ""),
 			mensagem: await MensagemInicial.obter(),
@@ -31,11 +31,11 @@ class IndexRoute {
 			if (req.body.login || req.body.senha) {
 				[mensagem, u] = await Usuario.efetuarLogin(req.body.login as string, req.body.senha as string, res);
 				if (mensagem)
-					res.render("home/login", { layout: "layout-externo", mensagem: mensagem });
+					res.render("index/login", { layout: "layout-externo", mensagem: mensagem });
 				else
 					res.redirect(app.root + "/");
 			} else {
-				res.render("home/login", { layout: "layout-externo", mensagem: null });
+				res.render("index/login", { layout: "layout-externo", mensagem: null });
 			}
 		} else {
 			res.redirect(app.root + "/");
@@ -47,7 +47,7 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("home/acesso", { titulo: "Sem Permissão", usuario: u });
+			res.render("index/acesso", { titulo: "Sem Permissão", usuario: u });
 	}
 
 	public static async perfil(req: app.Request, res: app.Response) {
@@ -55,7 +55,7 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/");
 		else
-			res.render("home/perfil", { titulo: "Meu Perfil", usuario: u });
+			res.render("index/perfil", { titulo: "Meu Perfil", usuario: u });
 	}
 
 	public static async logout(req: app.Request, res: app.Response) {

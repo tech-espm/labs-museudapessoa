@@ -47,6 +47,65 @@ window.parseQueryString = function () {
 	window.queryString = assoc;
 	return assoc;
 };
+/* https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+:: cookies.js ::
+
+A complete cookies reader/writer framework with full unicode support.
+
+Revision #1 - September 4, 2014
+
+https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+https://developer.mozilla.org/User:fusionchess
+
+This framework is released under the GNU Public License, version 3 or later.
+http://www.gnu.org/licenses/gpl-3.0-standalone.html
+
+Modified by Carlos Rafael Gimenes das Neves
+*/
+window.Cookies = {
+	create: function (name, value, expires, path, domain, secure) {
+		if (!name || /^(?:expires|max\-age|path|domain|secure)$/i.test(name)) return false;
+		var exp = "";
+		if (expires) {
+			switch (expires.constructor) {
+				case Number:
+					if (expires === Infinity) {
+						exp = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+					} else {
+						exp = new Date();
+						exp.setTime(exp.getTime() + (expires * 60 * 60 * 1000));
+						exp = "; expires=" + exp.toUTCString();
+					}
+					break;
+				case Date:
+					exp = "; expires=" + expires.toUTCString();
+					break;
+				case String:
+					exp = "; expires=" + expires;
+					break;
+			}
+		}
+		document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + exp + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");
+		return true;
+	},
+	get: function (name) {
+		return (!name ? null : (decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null));
+	},
+	remove: function (name, path, domain) {
+		if (!Cookies.exists(name)) return false;
+		document.cookie = encodeURIComponent(name) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "");
+		return true;
+	},
+	exists: function (name) {
+		if (!name) return false;
+		return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+	},
+	names: function () {
+		var ns = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+		for (var len = ns.length, idx = 0; idx < len; idx++) ns[idx] = decodeURIComponent(ns[idx]);
+		return ns;
+	}
+};
 window.encode = (function () {
 	var amp = /\&/g, lt = /</g, gt = />/g, quot = /\"/g, apos = /\'/g, grave = /\`/g;
 	window.encodeValue = function (x) {
@@ -58,7 +117,7 @@ window.encode = (function () {
 })();
 window.prepareCopyHandler = function (modal, selector) {
 	function copyError() {
-		Notification.error("Por favor, tecle Ctrl+C / Command+C para copiar " + emoji.sad);
+		Swal.error("Por favor, tecle Ctrl+C / Command+C para copiar " + emoji.sad);
 	}
 
 	var lastTooltipBtn = null,
@@ -128,7 +187,7 @@ window.prepareCustomFilter = function (table, tableId, customFilterLabel, placeh
 			customFilterHandlerPlain(table, input);
 		else
 			customFilterHandler(table, input);
-		input.className = "form-control input-sm upper";
+		input.className = "form-control form-control-sm input-sm upper";
 		input.setAttribute("type", "search");
 		input.setAttribute("placeholder", placeholder || "");
 		input.setAttribute("aria-controls", tableId);
@@ -137,8 +196,48 @@ window.prepareCustomFilter = function (table, tableId, customFilterLabel, placeh
 	}
 };
 window.format2 = function (x) {
-	return ((x < 10) ? ("0" + x) : x);
+	return ((x < 10) ? ("0" + x) : x.toString());
 };
+window.formatCurrency = (function () {
+	var expr = /\B(?=(\d{3})+(?!\d))/g, thousands = (window.currentLanguageId === 1 ? "," : ".");
+	window.formatSizeLong = function (size) {
+		//if (size < 16384)
+		//	return size + " bytes";
+		//return ((size * 0.0009765625) | 0).toString().replace(expr, ".") + " KB";
+		if (size) {
+			size = (size * 0.0009765625) | 0;
+			if (size <= 0)
+				size = 1;
+		}
+		return size.toString().replace(expr, thousands) + " KB";
+	};
+	window.formatSize = function (size) {
+		//if (size < 16384)
+		//	return size + " bytes";
+		//return (size >>> 10).toString().replace(expr, ".") + " KB";
+		if (size) {
+			size >>>= 10;
+			if (size <= 0)
+				size = 1;
+		}
+		return size.toString().replace(expr, thousands) + " KB";
+	};
+	window.formatNumber = (window.currentLanguageId === 1 ? function (x, digits) {
+		return x.toFixed(digits | 0).replace(expr, thousands);
+	} : function (x, digits) {
+		return x.toFixed(digits | 0).replace(".", ",").replace(expr, thousands);
+	});
+	window.formatPercent = (window.currentLanguageId === 1 ? function (x, digits) {
+		return x.toFixed(digits | 0) + "%";
+	} : function (x, digits) {
+		return x.toFixed(digits | 0).replace(".", ",") + "%";
+	});
+	return (window.currentLanguageId === 1 ? function (x, digits) {
+		return "R$ " + x.toFixed(digits | 0).replace(expr, thousands);
+	} : function (x, digits) {
+		return "R$ " + x.toFixed(digits | 0).replace(".", ",").replace(expr, thousands);
+	});
+})();
 window.formatHex8 = function (x) {
 	var s = "0000000" + x.toString(16).toLowerCase();
 	return s.substr(s.length - 8);
@@ -151,37 +250,6 @@ window.formatDuration = function (duration) {
 	s = s % 60;
 	return format2(m) + ":" + format2(s);
 };
-window.formatSize = (function () {
-	var expr = /\B(?=(\d{3})+(?!\d))/g, thousands = (window.currentLanguageId === 1 ? "." : ",");
-	window.formatSizeLong = function (size) {
-		//if (size < 16384)
-		//	return size + " bytes";
-		//return ((size * 0.0009765625) | 0).toString().replace(expr, ".") + " KB";
-		if (size) {
-			size = (size * 0.0009765625) | 0;
-			if (size <= 0)
-				size = 1;
-		}
-		return size.toString().replace(expr, thousands) + " KB";
-	};
-	return function (size) {
-		//if (size < 16384)
-		//	return size + " bytes";
-		//return (size >>> 10).toString().replace(expr, ".") + " KB";
-		if (size) {
-			size >>>= 10;
-			if (size <= 0)
-				size = 1;
-		}
-		return size.toString().replace(expr, thousands) + " KB";
-	};
-})();
-window.formatNumber = (function () {
-	var expr = /\B(?=(\d{3})+(?!\d))/g;
-	return function (x) {
-		return x.toString().replace(expr, ".");
-	};
-})();
 window.formatHour = function (x) {
 	return format2(x >>> 6) + ":" + format2(x & 63);
 };
@@ -200,7 +268,12 @@ window.maskPhone = function (field) {
 	$(field).mask("(00) 0000-0000JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ", { translation: { "J": { pattern: /[\d\D]/g } } });
 };
 window.maskHour = function (field) {
-	$(field).mask("00:00");
+	$(field).mask("A0:B0", {
+		translation: {
+			A: { pattern: /[0-2]/, optional: false },
+			B: { pattern: /[0-5]/, optional: false },
+		}
+	});
 };
 window.maskTextId = function (field) {
 	$(field).mask("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", { translation: { Z: { pattern: /[A-Za-z0-9\-]/, optional: true } } });
@@ -215,17 +288,6 @@ window.maskMobilePhone = function (field) {
 	};
 	$(field).mask(behavior, opt);
 };
-window.checkPasswordComplexity = function (password) {
-	if (!password || password.length < 6)
-		return false;
-	var i, delta, initialDelta = Math.abs(password.charCodeAt(1) - password.charCodeAt(0));
-	for (i = 2; i < password.length; i++) {
-		delta = Math.abs(password.charCodeAt(i) - password.charCodeAt(i - 1));
-		if (delta !== initialDelta)
-			return true;
-	}
-	return false;
-};
 window.addFilterButton = function (parent, icon, text, handler, title, btnClass) {
 	var p = _(parent), label, btn, i;
 	if (!p)
@@ -233,7 +295,7 @@ window.addFilterButton = function (parent, icon, text, handler, title, btnClass)
 	label = document.createElement("label");
 	btn = document.createElement("button");
 	btn.setAttribute("type", "button");
-	btn.className = "btn btn-outline btn-sm " + (btnClass || "btn-default");
+	btn.className = "btn btn-sm " + (btnClass || "btn-secondary");
 	i = document.createElement("i");
 	i.className = "fa fa14 " + icon;
 	btn.appendChild(i);
@@ -670,6 +732,20 @@ window.resetForm = function (f) {
 		validator.formSubmitted = false;
 	}
 };
+window.validateColor = function (color) {
+	if (!color || color.length !== 7 || color.charCodeAt(0) !== 0x23)
+		return false;
+
+	var i, c;
+
+	for (i = 1; i < 7; i++) {
+		c = color.charCodeAt(i);
+		if (!((c >= 0x30 && c <= 0x39) || (c >= 0x41 && c <= 0x46) || (c >= 0x61 && c <= 0x66)))
+			return false;
+	}
+
+	return true;
+}
 window.validateCNPJ = function (cnpj) {
 	if (!cnpj || !(cnpj = trim(cnpj.replace(/\./g, "").replace(/\-/g, "").replace(/\//g, ""))) || cnpj.length !== 14)
 		return false;
@@ -747,7 +823,7 @@ window.validateEmail = function (email) {
 	return (email.indexOf(":") < 0 && at > 0 && dot > (at + 1) && dot !== (email.length - 1) && at2 === at);
 };
 window.createItem = function (parent, icon, className, text, badge, clickHandler, name0, value0) {
-	var i, btn = document.createElement("button"), c = (className || "btn-outline btn-default");
+	var i, btn = document.createElement("button"), c = (className || "btn-secondary");
 	btn.setAttribute("type", "button");
 	for (i = 6; i < arguments.length; i += 2)
 		btn.setAttribute(arguments[i], arguments[i + 1]);
@@ -817,6 +893,9 @@ window.intToColor = function (i) {
 	return "#" + s.substr(s.length - 6);
 };
 window.relativeLuminance = function (rgb) {
+	if ((typeof rgb) === "string")
+		rgb = parseInt(rgb.replace("#", ""), 16);
+	rgb |= 0;
 	if (rgb < 0)
 		return 1;
 	//http://www.w3.org/TR/2007/WD-WCAG20-TECHS-20070517/Overview.html#G18
@@ -830,7 +909,7 @@ window.relativeLuminance = function (rgb) {
 	return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
 };
 window.textColorForBackground = function (i) {
-	return (relativeLuminance(i) < 0.4 ? "#fff" : "#000");
+	return (relativeLuminance(i) < 0.4) ? "#ffffff" : "#000000";
 };
 window.fixUrlOnBlur = function (input) {
 	var i = _(input);
@@ -1290,134 +1369,6 @@ window.capitalizarFrase = function (s, classe, tag) {
 		}
 	};
 })();
-window.Notification = {
-	div: null,
-	span: null,
-	btn: null,
-	version: 0,
-	timeout: 0,
-	timeoutVisible: 0,
-	timeoutGone: 0,
-	isVisible: false,
-	pathBase: "/",
-	imagePath: "Images",
-	defaultWaitAlt: "Aguarde",
-	defaultWaitMessage: "Por favor, aguarde...",
-	wait: function (msg) {
-		var span = document.createElement("span");
-		span.innerHTML = "<img alt=\"" + Notification.defaultWaitAlt + "\" src=\"" + Notification.pathBase + Notification.imagePath + "/loading-grey-t.gif\"> " + (msg || Notification.defaultWaitMessage);
-		return Notification.show(span, "default", -1);
-	},
-	success: function (message, important) {
-		return Notification.show(message, "success", important ? 7500 : 3500, true);
-	},
-	error: function (message, important) {
-		return Notification.show(message, "danger", important ? 7500 : 3500, true);
-	},
-	default: function (message, important) {
-		return Notification.show(message, "default", important ? 7500 : 3500, true);
-	},
-	warning: function (message, important) {
-		return Notification.show(message, "warning", important ? 7500 : 3500, true);
-	},
-	show: function (message, type, timeout, closeable) {
-		if (!Notification.div) {
-			Notification.div = document.createElement("div");
-			Notification.div.setAttribute("role", "alert");
-			Notification.div.className = "alert alert-notification";
-			Notification.span = document.createElement("span");
-			Notification.btn = document.createElement("button");
-			Notification.btn.setAttribute("aria-label", "Fechar");
-			Notification.btn.innerHTML = "&times;";
-			Notification.btn.onclick = Notification.hide;
-			Notification.div.appendChild(Notification.span);
-			Notification.div.appendChild(Notification.btn);
-			document.body.appendChild(Notification.div);
-		}
-
-		Notification.isVisible = true;
-		Notification.version++;
-
-		var version = Notification.version;
-
-		if (Notification.timeout) {
-			clearTimeout(Notification.timeout);
-			Notification.timeout = 0;
-		}
-
-		if (Notification.timeoutVisible) {
-			clearTimeout(Notification.timeoutVisible);
-			Notification.timeoutVisible = 0;
-		}
-
-		if (Notification.timeoutGone) {
-			clearTimeout(Notification.timeoutGone);
-			Notification.timeoutGone = 0;
-		}
-
-		if (timeout !== -1) {
-			if (isNaN(timeout) || timeout <= 0)
-				closeable = true;
-			else
-				Notification.timeout = setTimeout(function () {
-					if (Notification.version !== version)
-						return;
-					Notification.hide();
-				}, timeout + 30);
-		}
-
-		if (type !== "success" && type !== "info" && type !== "danger" && type !== "warning")
-			type = "default";
-
-		Notification.btn.className = (closeable ? "close" : "close hidden");
-		Notification.div.className = "alert alert-notification alert-" + type + (closeable ? " alert-dismissible" : "");
-		Notification.timeoutVisible = setTimeout(function () {
-			if (Notification.version !== version)
-				return;
-
-			if ((typeof message) === "string") {
-				Notification.span.textContent = message;
-			} else {
-				while (Notification.span.firstChild)
-					Notification.span.removeChild(Notification.span.firstChild);
-				Notification.span.appendChild(message);
-			}
-
-			$(Notification.div).addClass("alert-notification-shown");
-		}, 30);
-	},
-	hide: function () {
-		if (!Notification.div || !Notification.isVisible)
-			return;
-
-		Notification.isVisible = false;
-		Notification.version++;
-
-		var version = Notification.version;
-
-		if (Notification.timeout) {
-			clearTimeout(Notification.timeout);
-			Notification.timeout = 0;
-		}
-
-		if (Notification.timeoutVisible) {
-			clearTimeout(Notification.timeoutVisible);
-			Notification.timeoutVisible = 0;
-		}
-
-		if (Notification.timeoutGone) {
-			clearTimeout(Notification.timeoutGone);
-			Notification.timeoutGone = 0;
-		}
-
-		$(Notification.div).removeClass("alert-notification-shown");
-		Notification.timeoutGone = setTimeout(function () {
-			if (Notification.version !== version)
-				return;
-			$(Notification.div).addClass("alert-notification-gone");
-		}, 600);
-	}
-};
 window.BlobDownloader = {
 	blobURL: null,
 
@@ -1426,7 +1377,7 @@ window.BlobDownloader = {
 	supported: (("Blob" in window) && ("URL" in window) && ("createObjectURL" in window.URL) && ("revokeObjectURL" in window.URL)),
 
 	alertNotSupported: function () {
-		Notification.error("Infelizmente seu navegador não suporta essa funcionalidade " + emoji.sad, true);
+		Swal.error("Infelizmente seu navegador não suporta essa funcionalidade " + emoji.sad);
 		return false;
 	},
 
@@ -1443,7 +1394,7 @@ window.BlobDownloader = {
 				BlobDownloader.saveAs.call(window.navigator, blob, filename);
 				return;
 			} catch (ex) {
-				Notification.error("Ocorreu um erro durante o download dos dados " + emoji.sad, true);
+				Swal.error("Ocorreu um erro durante o download dos dados " + emoji.sad);
 			}
 		}
 
@@ -1795,11 +1746,14 @@ window.BlobDownloader = {
 		else if (this.selection >= this.menu.childNodes.length)
 			this.selection = this.menu.childNodes.length - 1;
 		var i, c;
-		for (i = this.menu.childNodes.length - 1; i >= 0; i--)
+		for (i = this.menu.childNodes.length - 1; i >= 0; i--) {
 			this.menu.childNodes[i].firstChild.style.background = "";
+			this.menu.childNodes[i].firstChild.style.color = "";
+		}
 		c = this.menu.childNodes[this.selection];
 		this.menu.scrollTop = c.offsetTop - 5;
-		c.firstChild.style.background = "rgba(102,175,233,.75)";
+		c.firstChild.style.background = "var(--primary)";
+		c.firstChild.style.color = "var(--primary-text)";
 	}
 
 	function cbSearch_DataOpen(normalized) {
@@ -1823,8 +1777,10 @@ window.BlobDownloader = {
 				if (value)
 					li.cbSearchValue = value;
 				a = document.createElement("a");
-				if (!ok)
-					a.style.background = "rgba(102,175,233,.75)";
+				if (!ok) {
+					a.style.background = "var(--primary)";
+					a.style.color = "var(--primary-text)";
+				}
 				a.className = "dropdown-item";
 				a.setAttribute("href", "#");
 				a.cbSearchData = this;
@@ -1929,19 +1885,14 @@ window.BlobDownloader = {
 		select.addEventListener("change", cbSearch_Change);
 		select.cbSearchChange = cbSearch_Change;
 		select.setAttribute("tabindex", "-1");
-		select.style.height = "34px";
 		outerdiv.className = "dropdown";
-		outerdiv.style.height = "34px";
 		groupdiv.className = "form-group input-group";
 		groupdiv.style.position = "absolute";
 		groupdiv.style.left = "0";
 		groupdiv.style.top = "0";
 		groupdiv.style.pointerEvents = "none";
-		groupdiv.style.height = "34px";
 		span.className = "input-group-btn";
-		span.style.height = "34px";
 		button.className = "btn btn-default btn-force-border";
-		button.style.height = "34px";
 		button.setAttribute("type", "button");
 		button.setAttribute("aria-label", "Pesquisar");
 		button.setAttribute("tabindex", "-1");
@@ -1951,7 +1902,6 @@ window.BlobDownloader = {
 			input.className = "form-control select-arrow" + ((select.className.indexOf("upper") >= 0) ? " upper" : "");
 		else
 			input.className = "form-control upper select-arrow";
-		input.style.height = "34px";
 		input.setAttribute("type", "text");
 		input.setAttribute("spellcheck", "false");
 		// In order to disable address autofill/autocomplete
@@ -2009,8 +1959,8 @@ window.BlobDownloader = {
 
 		select.addEventListener("change", function () {
 			var i, nextValue = emptyValue, opt, opts = optsCallback(select.options.selectedIndex, select.value);
-			while (nextSelect.childNodes.length > 1)
-				nextSelect.removeChild(nextSelect.childNodes[1]);
+			while (nextSelect.children.length > 1)
+				nextSelect.removeChild(nextSelect.children[1]);
 			if (opts && opts.length) {
 				for (i = 0; i < opts.length; i++) {
 					opt = document.createElement("option");
@@ -2025,64 +1975,760 @@ window.BlobDownloader = {
 		});
 	};
 })();
-
-function fixMessage(message, obj) {
-	if (message) {
-		if (message.html)
-			obj.html = message.html;
-		else
-			obj.text = message;
-	} else {
-		obj.text = "";
+window.prepareFilteredCbState = function (cbState, cbCity, callback) {
+	if (cbCity) {
+		var i, j, tmp, cities;
+		for (i = 0; i < cbState.options.length; i++) {
+			tmp = cbState.options[i].getAttribute("data-cities");
+			cbState.options[i].removeAttribute("data-cities");
+			if (tmp && tmp.length) {
+				tmp = tmp.split("|");
+				if (tmp.length >= 2) {
+					cities = [];
+					for (j = 0; j < tmp.length; j += 2)
+						cities.push([tmp[j], tmp[j + 1]]);
+					cbState.options[i].dataCities = cities;
+				} else {
+					cbState.options[i].dataCities = [];
+				}
+			} else {
+				cbState.options[i].dataCities = [];
+			}
+		}
+		cbState.onchange = function () {
+			var i, opt, cities = cbState.options[cbState.options.selectedIndex].dataCities;
+			while (cbCity.childNodes.length > 1)
+				cbCity.removeChild(cbCity.childNodes[1]);
+			cbCity.value = "0";
+			if (cbCity.cbSearchInput)
+				cbCity.cbSearchInput.value = "";
+			if (cities && cities.length) {
+				for (i = 0; i < cities.length; i++) {
+					opt = document.createElement("option");
+					opt.setAttribute("value", cities[i][1]);
+					opt.textContent = cities[i][0];
+					cbCity.appendChild(opt);
+				}
+			}
+			if (callback)
+				callback();
+		};
 	}
-	return obj;
-}
+};
+window.prepareCbState = function (cbState, cbCity, callback) {
+	if (cbCity) {
+		cbState.onchange = function () {
+			var i, id, opt, s = parseInt(cbState.value), extras;
+			s = ((!isNaN(s) && s > 0) ? window.cidades[s] : null);
+			while (cbCity.childNodes.length > 1)
+				cbCity.removeChild(cbCity.childNodes[1]);
+			cbCity.value = "0";
+			if (cbCity.cbSearchInput)
+				cbCity.cbSearchInput.value = "";
+			if (s && s.c && s.c.length) {
+				extras = s.extras;
+				id = s.i;
+				s = s.c;
+				for (i = 0; i < s.length; i++) {
+					opt = document.createElement("option");
+					opt.setAttribute("value", id + i);
+					opt.textContent = s[i];
+					cbCity.appendChild(opt);
+				}
+				if (extras) {
+					for (i = 0; i < extras.length; i++) {
+						opt = document.createElement("option");
+						opt.setAttribute("value", extras[i].i);
+						opt.textContent = extras[i].n;
+						cbCity.insertBefore(opt, cbCity.childNodes[extras[i].idx + 1]);
+					}
+				}
+			}
+			if (callback)
+				callback();
+		};
+		cbState.onchange();
+		if (cbState.cbSearchChange)
+			cbState.cbSearchChange();
+	}
+};
+window.DataUtil = {
+	converterISOParaNumero: function (dataISO) {
+		return (dataISO && dataISO.length >= 10) ? (((10000 * parseInt(dataISO.substring(0, 4))) +
+				(100 * parseInt(dataISO.substring(5, 7))) +
+				parseInt(dataISO.substring(8, 10))) | 0) : 0;
+	},
 
-Notification.success = function (message, title) {
-	Notification.hide();
+	converterNumeroParaISO: function (dataISONumerica) {
+		return DataUtil.formatar((dataISONumerica / 10000) | 0, ((dataISONumerica / 100) | 0) % 100, dataISONumerica % 100);
+	},
 
-	return swal(fixMessage(message, {
-		title: ((title && title !== true) ? title : "Sucesso!"),
-		type: "success",
-		buttonsStyling: false,
-		confirmButtonClass: "btn btn-success"
-	}));
+	formatarBr: function (ano, mes, dia) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano;
+	},
+
+	formatarBrComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	formatar: function (ano, mes, dia) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia);
+	},
+
+	formatarComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia) + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	converterDataISO: function (dataComOuSemHorario, formatoBr) {
+		if (!dataComOuSemHorario || !(dataComOuSemHorario = dataComOuSemHorario.trim()))
+			return null;
+		let b1 = dataComOuSemHorario.indexOf("/");
+		let b2 = dataComOuSemHorario.lastIndexOf("/");
+		let dia, mes, ano;
+		if (b1 <= 0 || b2 <= b1) {
+			let b1 = dataComOuSemHorario.indexOf("-");
+			let b2 = dataComOuSemHorario.lastIndexOf("-");
+			if (b1 <= 0 || b2 <= b1)
+				return null;
+			ano = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			dia = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		} else {
+			dia = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			ano = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		}
+		if (isNaN(dia) || isNaN(mes) || isNaN(ano) ||
+			dia < 1 || mes < 1 || ano < 1 ||
+			dia > 31 || mes > 12 || ano > 9999)
+			return null;
+		switch (mes) {
+			case 2:
+				if (!(ano % 4) && ((ano % 100) || !(ano % 400))) {
+					if (dia > 29)
+						return null;
+				} else {
+					if (dia > 28)
+						return null;
+				}
+				break;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				if (dia > 30)
+					return null;
+				break;
+		}
+		let sepHorario = dataComOuSemHorario.indexOf(" ");
+		if (sepHorario < 0)
+			sepHorario = dataComOuSemHorario.indexOf("T");
+		if (sepHorario >= 0) {
+			const horario = dataComOuSemHorario.substring(sepHorario + 1);
+			const sepMinuto = horario.indexOf(":");
+			if (sepMinuto >= 0) {
+				const hora = parseInt(horario);
+				const minuto = parseInt(horario.substring(sepMinuto + 1));
+				if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59) {
+					const sepSegundo = horario.indexOf(":", sepMinuto + 1);
+					if (sepSegundo >= 0) {
+						const segundo = parseInt(horario.substring(sepSegundo + 1));
+						if (segundo >= 0 && segundo <= 59)
+							return (formatoBr ?
+								DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, segundo) :
+								DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, segundo));
+					} else {
+						return (formatoBr ?
+							DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, 0) :
+							DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, 0));
+					}
+				}
+			}
+			return null;
+		}
+		return (formatoBr ?
+			DataUtil.formatarBr(ano, mes, dia) :
+			DataUtil.formatar(ano, mes, dia));
+	},
+
+	removerHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 10) ? "" : dataISOOuBrComHorario.substring(0, 10));
+	},
+
+	obterHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11));
+	},
+
+	obterHorarioSemSegundos: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11, 16));
+	},
+
+	dateUTC: function (deltaSegundos) {
+		return (deltaSegundos ? new Date((new Date()).getTime() + (deltaSegundos * 1000)) : new Date());
+	},
+
+	horarioDeBrasiliaComoDateUTC: function (deltaSegundos) {
+		let time = (new Date()).getTime();
+		if (deltaSegundos)
+			time += (deltaSegundos * 1000);
+		return new Date(time - (180 * 60000));
+	},
+
+	horarioDeBrasiliaBr: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaBrInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaBrFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
+	},
+
+	horarioDeBrasiliaISO: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaISOInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaISOFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
+	},
+
+	horarioUTCISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioUTCISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioLocalISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	},
+
+	horarioLocalBr: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	}
+};
+window.prepareDatePicker = function (id, options) {
+	// http://bootstrap-datepicker.readthedocs.org/en/latest/options.html#format
+	// https://uxsolutions.github.io/bootstrap-datepicker
+	var i, i$ = $(id), d, opt = {
+		autoclose: true,
+		clearBtn: true,
+		format: "dd/mm/yyyy",
+		language: "pt-BR",
+		todayBtn: true,
+		todayHighlight: true
+	};
+
+	if (options) {
+		for (i in options)
+			opt[i] = options[i];
+	}
+
+	d = i$.datepicker(opt);
+
+	if ((i$ = i$[0])) {
+		i$.setAttribute("autocomplete", "off");
+		i$.setAttribute("spellcheck", "false");
+	}
+
+	return d;
 };
 
-Notification.info = function (message, title) {
-	Notification.hide();
-
-	return swal(fixMessage(message, {
-		title: ((title && title !== true) ? title : "Informação"),
-		type: "info",
-		buttonsStyling: false,
-		confirmButtonClass: "btn btn-default"
-	}));
+window.setDatePickerValue = function (id, value) {
+	var $i, i;
+	if ((i = ($i = $(id))[0])) {
+		i.value = value;
+		$i.datepicker("update");
+		//if (("dispatchEvent" in i) && ("Event" in window)) {
+		//	i.dispatchEvent(new Event("keydown"));
+		//	i.dispatchEvent(new Event("change"));
+		//	i.dispatchEvent(new Event("keyup"));
+		//}
+	}
 };
 
-Notification.error = function (message, title) {
-	Notification.hide();
+window.prepareMultiselect = function (id, options) {
+	const i$ = $(id), create = function (select) {
+		let opts = select.getElementsByTagName("option"),
+			items = new Array(opts.length);
 
-	return swal(fixMessage(message, {
-		title: ((title && title !== true) ? title : "Oops..."),
-		type: "error",
-		buttonsStyling: false,
-		confirmButtonClass: "btn btn-danger"
-	}));
+		const btn = document.createElement("button");
+
+		btn.selection = {};
+		btn.selectionCount = 0;
+		btn.selectionItems = items;
+		btn.setAttribute("id", select.getAttribute("id"));
+		btn.setAttribute("type", "button");
+		btn.className = (options && options.className) || "btn btn-primary btn-block";
+		btn.setAttribute("data-label", (options && options.label) || "Seleção");
+		btn.textContent = btn.getAttribute("data-label") + ": Nada";
+
+		if (select.parentNode)
+			select.parentNode.replaceChild(btn, select);
+
+		for (let i = opts.length - 1; i >= 0; i--)
+			items[i] = {
+				id: opts[i].getAttribute("value"),
+				text: opts[i].textContent,
+				backgroundColor: opts[i].style.backgroundColor,
+				color: opts[i].style.color
+			};
+
+		opts = null;
+		items = null;
+
+		btn.onclick = async function () {
+			if (isSwalOpen())
+				return;
+
+			const selection = btn.selection,
+				items = btn.selectionItems;
+
+			let tempSelection = {}, tempSelectionCount = btn.selectionCount,
+				html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div>';
+
+			for (let i = 0; i < items.length; i++)
+				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + ((items[i].color || items[i].backgroundColor) ? ('<span class="badge" style="font-size: 1em;' + (items[i].color ? ("color:" + items[i].color + ";") : "") + (items[i].backgroundColor ? ("background-color:" + items[i].backgroundColor + ";") : "") + '">' + encode(items[i].text) + '</span> ') : encode(items[i].text)) + '</button>';
+
+			for (let i in selection)
+				tempSelection[i] = true;
+
+			Swal.okcancelNoIcon({
+				html: html,
+				title: options && options.title,
+				didOpen: function () {
+					let lastSearch = "";
+
+					const handleChange = function () {
+						const s = normalizeAccent(this.value);
+
+						if (lastSearch === s)
+							return;
+
+						lastSearch = s;
+
+						$("#swal2-html-container .btn.mb-0").each(function () {
+							if (!s || this.getAttribute("data-ntext").indexOf(s) >= 0)
+								this.classList.remove("hidden");
+							else
+								this.classList.add("hidden");
+						});
+					};
+
+					$("#swal2-html-container").on("change", "input", handleChange);
+					$("#swal2-html-container").on("keydown", "input", handleChange);
+					$("#swal2-html-container").on("keyup", "input", handleChange);
+
+					$("#swal2-html-container").on("click", ".btn", function () {
+						const id = this.getAttribute("data-id");
+						if (!id) {
+							if (tempSelectionCount === items.length) {
+								tempSelectionCount = 0;
+								tempSelection = {};
+								$("#swal2-html-container .btn-primary").addClass("btn-light").removeClass("btn-primary");
+							} else {
+								tempSelectionCount = items.length;
+								$("#swal2-html-container .btn-light").addClass("btn-primary").removeClass("btn-light");
+								for (let i = 0; i < items.length; i++)
+									tempSelection[items[i].id] = true;
+							}
+						} else if (tempSelection[id]) {
+							delete tempSelection[id];
+							tempSelectionCount--;
+							$(this).addClass("btn-light").removeClass("btn-primary");
+						} else {
+							tempSelection[id] = true;
+							tempSelectionCount++;
+							$(this).addClass("btn-primary").removeClass("btn-light");
+						}
+					});
+				},
+				preConfirm: function () {
+					btn.selection = tempSelection;
+					btn.selectionCount = tempSelectionCount;
+					btn.textContent = btn.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+					return true;
+				}
+			});
+		};
+	};
+
+	for (let i = 0; i < i$.length; i++) {
+		if (i$[i])
+			create(i$[i]);
+	}
+
+	return i$;
+};
+window.getMultiselectItems = function (id) {
+	let i$ = $(id);
+
+	return (((i$ = i$[0]) && i$.selection && i$.selectionItems) || []);
+};
+window.setMultiselectItems = function (id, items) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		i$.selectionItems = items || [];
+
+		const values = [];
+		for (let i in i$.selection)
+			values.push(i);
+
+		setMultiselectSelection(id, values);
+	}
+};
+window.getMultiselectSelection = function (id) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const s = [];
+		for (let i in i$.selection)
+			s.push(i);
+		return s;
+	}
+
+	return [];
+};
+window.setMultiselectSelection = function (id, values) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const tempSelection = {}, items = i$.selectionItems;
+		let tempSelectionCount = 0;
+
+		if (values && values.length) {
+			for (let i = items.length - 1; i >= 0; i--) {
+				for (let j = values.length - 1; j >= 0; j--) {
+					if (items[i].id == values[j]) {
+						tempSelection[items[i].id] = true;
+						tempSelectionCount++;
+						break;
+					}
+				}
+			}
+		}
+
+		i$.selection = tempSelection;
+		i$.selectionCount = tempSelectionCount;
+		i$.textContent = i$.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+	}
 };
 
-Notification.okcancel = function (message, title, danger, confirmButtonText) {
-	Notification.hide();
-
-	return swal(fixMessage(message, {
-		title: ((title && title !== true) ? title : (danger ? "Oops..." : "Confirmação")),
-		type: (danger ? "warning" : "question"),
-		buttonsStyling: false,
-		showCancelButton: true,
-		confirmButtonClass: (danger ? "btn btn-danger" : "btn btn-primary"),
-		confirmButtonText: (confirmButtonText || "OK"),
-		cancelButtonClass: "btn btn-default",
-		cancelButtonText: "Cancelar",
-		focusCancel: true
-	}));
+window.isSwalOpen = function () {
+	return !!Swal.getContainer();
 };
+
+window.isModalOpen = function () {
+	return !!$(".modal.show").length;
+};
+
+Swal.error = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "error";
+
+	if (!options.title)
+		options.title = title || "Oops...";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-danger";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.warning = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "warning";
+
+	if (!options.title)
+		options.title = title || "Aviso";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-primary";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.info = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "info";
+
+	if (!options.title)
+		options.title = title || "Informação";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-primary";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.success = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "success";
+
+	if (!options.title)
+		options.title = title || "Sucesso!";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-success";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.okcancel = function (message, title, danger) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = (danger ? "warning" : "question");
+
+	if (!options.title)
+		options.title = title || (danger ? "Oops..." : "Confirmação");
+
+	options.showCancelButton = true;
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = (danger ? "btn btn-danger" : "btn btn-primary");
+
+		if (!options.customClass.cancelButton)
+			options.customClass.cancelButton = "btn btn-secondary ml-2";
+	}
+
+	if (!options.confirmButtonText)
+		options.confirmButtonText = "OK";
+
+	if (!options.cancelButtonText)
+		options.cancelButtonText = "Cancelar";
+
+	if (!("focusCancel" in options))
+		options.focusCancel = true;
+
+	return Swal.fire(options);
+};
+
+Swal.okcancelNoIcon = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.title)
+		options.title = title || "Confirmação";
+
+	options.showCancelButton = true;
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-primary";
+
+		if (!options.customClass.cancelButton)
+			options.customClass.cancelButton = "btn btn-secondary ml-2";
+	}
+
+	if (!options.confirmButtonText)
+		options.confirmButtonText = "OK";
+
+	if (!options.cancelButtonText)
+		options.cancelButtonText = "Cancelar";
+
+	if (!("focusCancel" in options))
+		options.focusCancel = true;
+
+	return Swal.fire(options);
+};
+
+(function () {
+	var waitCalled = false, shouldShowWait = false, fire = Swal.fire;
+
+	Swal.fire = function () {
+		if (waitCalled) {
+			waitCalled = false;
+			shouldShowWait = true;
+		} else {
+			shouldShowWait = false;
+		}
+
+		return fire.apply(Swal, arguments);
+	};
+
+	var waitInternal = function (message, dark) {
+		var options = message;
+
+		if (!options)
+			options = {};
+
+		if (typeof message === "string")
+			options = { text: message };
+
+		if (!options.html && !options.text)
+			options.text = "Por favor, aguarde...";
+
+		if (!options.allowOutsideClick)
+			options.allowOutsideClick = false;
+
+		if (!options.allowEscapeKey)
+			options.allowEscapeKey = false;
+
+		if (!options.allowEnterKey)
+			options.allowEnterKey = false;
+
+		if (!dark) {
+			if (!options.showClass)
+				options.showClass = { backdrop: "" };
+			else
+				options.showClass.backdrop = "";
+		}
+
+		var didOpen = options.didOpen;
+
+		options.didOpen = function () {
+			if (shouldShowWait) {
+				Swal.showLoading();
+				if (didOpen)
+					didOpen();
+			}
+		};
+
+		waitCalled = true;
+
+		return Swal.fire(options);
+	};
+
+	Swal.wait = function (message) {
+		return waitInternal(message, false);
+	};
+
+	Swal.waitDark = function (message) {
+		return waitInternal(message, true);
+	};
+})();
