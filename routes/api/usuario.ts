@@ -38,7 +38,7 @@ class UsuarioApiRoute {
 	}
 
 	@app.http.post()
-	public static async alterar(req: app.Request, res: app.Response) {
+	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res, true);
 		if (!u)
 			return;

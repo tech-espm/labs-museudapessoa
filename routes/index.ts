@@ -14,11 +14,9 @@ class IndexRoute {
 
 	@app.route.methodName("/assistente/:n?")
 	public static async assistente(req: app.Request, res: app.Response) {
-		res.render("index/chat", {
-			layout: "layout-externo",
-			nomepessoa: (req.params["n"] || ""),
-			mensagem: await MensagemInicial.obter(),
-			pessoa: await Pessoa.obterConversa(req.params["n"] || "")
+		res.render("index/assistente", {
+			layout: "layout-assistente",
+			info: await Pessoa.obterConversa(req.params["n"] || "")
 		});
 	}
 

@@ -1,0 +1,618 @@
+﻿<div id="conversa-corpo"><div id="conversa-container"><div style="margin: 0 0 30px;"><img src="<%- staticRoot %>/img/logo.png" alt="Logo do Museu da Pessoa" height="75" /></div></div></div>
+<form id="conversa-rodape" method="post" action=".">
+	<!-- <input type="text" id="txtMensagem" autocomplete="off" placeholder="Escreva sua mensagem" /> -->
+	<select id="txtMensagem">
+		<option value="">Escolha um assunto...</option>
+	</select>
+	<button type="submit" class="mupe-icon-bottom">
+		<span>Enviar</span>
+	</button>
+</form>
+
+<div id="mensagem-inicial-painel">
+	<div id="mensagem-inicial-container">
+		<div id="mensagem-inicial-balao"><%- info.pessoa.htmlmensagem %></div>
+		<div id="mensagem-inicial-avatar"></div>
+	</div>
+	<div id="mensagem-inicial-html">
+		<div id="mensagem-inicial-html-inner"><%- info.pessoa.htmlinicial %></div>
+		<div id="mensagem-inicial-botao">
+			<button type="button" class="mupe-icon-bottom" style="width: 180px;" onclick="iniciarConversa()">
+				<span>Iniciar conversa!</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+<%- contentFor("styles") %>
+<link rel="stylesheet" href="<%- staticRoot %>/fonts/gilroy.css" />
+
+<style type="text/css">
+	html {
+		min-height: 100%;
+		height: 100%;
+	}
+
+	body {
+		background-image: url('<%- staticRoot %>/img/pessoa/fundo<%- info.pessoa.id %>.png?<%- info.pessoa.versaoimagem %>');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-attachment: fixed;
+		min-height: 100%;
+		font-family: Gilroy, sans-serif;
+	}
+
+	hr {
+		border-color: #aaa;
+	}
+
+	.btn {
+		white-space: normal;
+	}
+
+	#conversa-corpo {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 64px;
+		overflow: auto;
+		padding: 0 15px 15px;
+	}
+
+	#mensagem-inicial-painel {
+		position: fixed;
+		left: 0;
+		top: 80px;
+		right: 0;
+		bottom: 0;
+		opacity: 1;
+		transition: opacity ease .5s;
+	}
+
+	#mensagem-inicial-painel.invisivel {
+		opacity: 0;
+	}
+
+	#conversa-container, #conversa-rodape, #mensagem-inicial-container {
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	#mensagem-inicial-container {
+		position: relative;
+		height: 100%;
+		min-height: 100%;
+		max-height: 100%;
+	}
+
+	#mensagem-inicial-balao {
+		position: absolute;
+		right: 55%;
+		bottom: 65%;
+		width: auto;
+		max-width: 43%;
+		padding: 10px;
+		font-weight: 600;
+		background-color: #fff;
+		font-size: 22px;
+	}
+
+		#mensagem-inicial-balao span {
+			color: <%- info.pessoa.corfundo %>;
+			font-weight: bold;
+		}
+
+	#mensagem-inicial-avatar {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		right: 2%;
+		bottom: 55%;
+		background-position: left bottom;
+		background-size: contain;
+		background-image: url('<%- staticRoot %>/img/pessoa/foto<%- info.pessoa.id %>.png?<%- info.pessoa.versaoimagem %>');
+		background-repeat: no-repeat;
+	}
+
+	@media(max-width:767px) {
+		#mensagem-inicial-balao {
+			bottom: 58%;
+			font-size: 16px;
+		}
+	}
+
+	@media(max-width:450px) {
+		#mensagem-inicial-balao {
+			font-size: 14px;
+		}
+	}
+
+	#mensagem-inicial-html {
+		position: absolute;
+		left: 0;
+		top: 45%;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+	}
+
+	#mensagem-inicial-html-inner {
+		max-width: 80ch;
+		margin: 0 auto;
+	}
+
+	#mensagem-inicial-botao {
+		text-align: center;
+	}
+
+	.avatar {
+		width: 50px;
+		vertical-align: top;
+	}
+
+	.linha-mensagem {
+		margin: 15px 0 0;
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		justify-items: flex-start;
+	}
+
+	.mensagem {
+		position: relative;
+		text-align: left;
+		display: inline-block;
+		vertical-align: top;
+		min-width: 150px;
+		max-width: 400px;
+		flex: 1 1 auto;
+		margin: 15px 0 0;
+	}
+
+	.balao {
+		position: absolute;
+		background-image: url('<%- staticRoot %>/img/balao.png');
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		top: 12px;
+		width: 32px;
+		height: 16px;
+		z-index: -1;
+	}
+
+	.mensagem-container {
+		padding: 10px;
+		color: #000;
+		background-color: #fff;
+		word-break: break-word;
+	}
+
+		.mensagem-container > h1, .mensagem-container > p {
+			font-size: 14px;
+			margin: 0 0 5px;
+		}
+
+		.mensagem-container > h1 {
+			font-weight: 600;
+			color: <%- info.pessoa.corfundo %>;
+		}
+
+		.mensagem-container > p {
+			white-space: pre-wrap;
+		}
+
+		.mensagem-container > div {
+			text-align: right;
+			font-weight: 600;
+			font-size: 10px;
+		}
+
+	.mensagem-outro {
+		padding: 0 0 0 20px;
+	}
+
+		.mensagem-outro > .balao {
+			left: 5px;
+		}
+
+	.mensagem-eu {
+		margin-left: auto;
+		padding: 0 20px 0 0;
+	}
+
+		.mensagem-eu > .balao {
+			right: 5px;
+		}
+
+	.mensagem-eu.erro > .mensagem-container {
+		background-color: #f8c6c6;
+	}
+
+	.mensagem-eu.erro > .balao {
+		background-image: url('<%- staticRoot %>/img/balao-erro.png');
+	}
+
+	#conversa-rodape {
+		position: fixed;
+		display: flex;
+		left: 0;
+		height: 64px;
+		right: 0;
+		bottom: 0;
+		padding: 0;
+		font-size: 15px;
+	}
+
+	#txtMensagem {
+		display: block;
+		width: 100%;
+		height: 64px;
+		border: 0 none transparent;
+		outline: 0 none transparent;
+		background-color: #fff;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAUCAAAAAA/s+ULAAAAAnRSTlMAAHaTzTgAAABNSURBVHjarcwBDQAgEAAhS9rMPl/Ni+AmBGDNfnLWs8FfI/4a8deIv0b8NeKvEX+N+GvEXyP+GvHXiL9G/DXirxF/jfhrxF8j/hp/vgv3fJip4oGwmgAAAABJRU5ErkJggg==);
+		background-repeat: no-repeat;
+		-webkit-background-size: 16px 4px;
+		background-size: 16px 4px;
+		background-position: right center;
+		cursor: pointer;
+		padding: 5px 25px 5px 15px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		-ms-appearance: none;
+		appearance: none;
+	}
+
+		#txtMensagem:focus {
+			outline: 0 none transparent;
+		}
+
+	.mupe-icon-bottom {
+		background: <%- info.pessoa.corbotao %>;
+		color: <%- info.pessoa.cortextobotao %>;
+		padding: .7em 1.6em .9em;
+		display: inline-block;
+		max-width: 100%;
+		font-weight: bold;
+		height: 64px;
+		position: relative;
+		text-decoration: none !important;
+		margin: 0;
+		border: none !important;
+		border-radius: 0 !important;
+		width: 100px;
+		text-align: center;
+		min-width: 0;
+		transition: color ease .5s;
+	}
+
+		.mupe-icon-bottom:before {
+			content: "";
+			display: block;
+			position: absolute;
+			background: #000;
+			width: 100%;
+			height: 6px;
+			bottom: 0;
+			left: 0;
+			transition: height ease .5s, border-bottom-width ease .5s;
+			z-index: 0;
+			border-bottom: 0 solid <%- info.pessoa.corbotao %>;
+		}
+
+		.mupe-icon-bottom:hover {
+			color: #fff;
+		}
+
+			.mupe-icon-bottom:hover:before {
+				height: 100%;
+				border-bottom-width: 6px;
+			}
+
+		.mupe-icon-bottom span {
+			vertical-align: middle;
+			display: inline-block;
+			line-height: 1em;
+			font-size: 1em;
+			z-index: 2;
+			position: relative;
+			padding-bottom: .2em;
+		}
+</style>
+
+<style type="text/css">
+/* Tenta simular o conteúdo do arquivo public/lib/ckeditor/contents.css */
+#mensagem-inicial-html {
+	font-family: 'Gilroy', sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: 15px;
+	line-height: 1.5;
+	color: #000;
+	background-color: #fff;
+	padding: 10px;
+}
+
+#mensagem-inicial-html blockquote {
+	font-style: italic;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0;
+}
+
+#mensagem-inicial-html a {
+	color: #0782C1;
+}
+
+#mensagem-inicial-html ol,
+#mensagem-inicial-html ul,
+#mensagem-inicial-html dl {
+	/* IE7: reset rtl list margin. (#7334) */
+	margin-right: 0px;
+	/* Preserved spaces for list items with text direction different than the list. (#6249,#8049)*/
+	padding: 0 0 0 20px;
+}
+
+#mensagem-inicial-html h1,
+#mensagem-inicial-html h2,
+#mensagem-inicial-html h3,
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6 {
+	font-weight: normal;
+	font-style: normal;
+	line-height: 1.25;
+}
+
+#mensagem-inicial-html h1 {
+	font-size: 30px;
+}
+
+#mensagem-inicial-html h2 {
+	font-size: 25px;
+}
+
+#mensagem-inicial-html h3 {
+	font-size: 20px;
+}
+
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6 {
+	font-size: 15px;
+}
+
+#mensagem-inicial-html h1,
+#mensagem-inicial-html h2,
+#mensagem-inicial-html h3,
+#mensagem-inicial-html h4,
+#mensagem-inicial-html h5,
+#mensagem-inicial-html h6,
+#mensagem-inicial-html p,
+#mensagem-inicial-html ol,
+#mensagem-inicial-html ul,
+#mensagem-inicial-html dl {
+	margin: 0 0 15px;
+}
+
+#mensagem-inicial-html hr {
+	border: 0px;
+	border-top: 1px solid #000;
+	margin: 15px 0;
+}
+
+#mensagem-inicial-html img.right {
+	border: 1px solid #000;
+	float: right;
+	margin-left: 15px;
+	padding: 5px;
+}
+
+#mensagem-inicial-html img.left {
+	border: 1px solid #000;
+	float: left;
+	margin-right: 15px;
+	padding: 5px;
+}
+
+#mensagem-inicial-html pre {
+	white-space: pre-wrap; /* CSS 2.1 */
+	word-wrap: break-word; /* IE7 */
+	-moz-tab-size: 4;
+	tab-size: 4;
+}
+
+#mensagem-inicial-html .marker {
+	background-color: Yellow;
+}
+
+#mensagem-inicial-html span[lang] {
+	font-style: italic;
+}
+
+#mensagem-inicial-html figure {
+	text-align: center;
+	border: solid 1px #000;
+	background: #eee;
+	padding: 15px;
+	margin: 15px;
+	display: inline-block;
+}
+
+#mensagem-inicial-html figure > figcaption {
+	text-align: center;
+	display: block; /* For IE8 */
+}
+
+#mensagem-inicial-html a > img {
+	padding: 1px;
+	margin: 1px;
+	border: none;
+	outline: 0 none transparent;
+}
+
+/* Widget Styles */
+#mensagem-inicial-html .code-featured {
+	border: 5px solid red;
+}
+
+#mensagem-inicial-html .math-featured {
+	padding: 20px;
+	box-shadow: 0 0 2px rgba(200, 0, 0, 1);
+	background-color: rgba(255, 0, 0, 0.05);
+	margin: 10px;
+}
+
+#mensagem-inicial-html .image-clean {
+	border: 0;
+	background: none;
+	padding: 0;
+}
+
+#mensagem-inicial-html .image-clean > figcaption {
+	font-size: .9em;
+	text-align: right;
+}
+
+#mensagem-inicial-html .image-grayscale {
+	background-color: white;
+	color: #666;
+}
+
+#mensagem-inicial-html .image-grayscale img, img.image-grayscale {
+	filter: grayscale(100%);
+}
+
+#mensagem-inicial-html .embed-240p {
+	max-width: 426px;
+	max-height: 240px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-360p {
+	max-width: 640px;
+	max-height: 360px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-480p {
+	max-width: 854px;
+	max-height: 480px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-720p {
+	max-width: 1280px;
+	max-height: 720px;
+	margin:0 auto;
+}
+
+#mensagem-inicial-html .embed-1080p {
+	max-width: 1920px;
+	max-height: 1080px;
+	margin:0 auto;
+}
+</style>
+
+<%- contentFor("scripts") %>
+<script type="text/javascript">
+	"use strict";
+
+	var conversaCorpo = document.getElementById("conversa-corpo"),
+		$conversaContainer = $("#conversa-container"),
+		conversaRodape = document.getElementById("conversa-rodape"),
+		txtMensagem = document.getElementById("txtMensagem"),
+		idconversa = "<%= info.idconversa %>",
+		conversaAtiva = false,
+		pessoa = <%- JSON.stringify(info.pessoa) %>,
+		assuntos = JSON.parse(pessoa.jsonassuntos);
+
+	function agora() {
+		var d = new Date();
+		return format2(d.getHours()) + ":" + format2(d.getMinutes());
+	}
+
+	function adicionarMensagem(mensagem, nome) {
+		var $div = $(nome ?
+			'<div class="linha-mensagem"><img src="<%- staticRoot %>/img/pessoa/avatar<%- info.pessoa.id %>.png?<%- info.pessoa.versaoimagem %>" alt="Avatar da Mani" width="75" height="75" /><div class="mensagem mensagem-outro"><div class="balao"></div><div class="mensagem-container"><h1>' + encode(nome) + ' - ' + agora() + '</h1>' + mensagem + '</div></div></div>' :
+			'<div class="linha-mensagem text-right"><div class="mensagem mensagem-eu espera"><div class="balao"></div><div class="mensagem-container"><h1>Você - ' + agora() + '</h1><img src="<%- staticRoot %>/img/loading-white.gif" /><p>' + encode(trim(mensagem)) + '</p></div></div><img src="<%- staticRoot %>/img/avatar-voce.png" alt="Seu Avatar" width="75" height="75" /></div>'
+		);
+
+		$conversaContainer.append($div);
+
+		conversaCorpo.scrollTo(0, $conversaContainer.height());
+
+		return $div;
+	}
+
+	document.getElementById("conversa-rodape").onsubmit = function (e) {
+		cancelEvent(e);
+
+		let i = parseInt(txtMensagem.value), $msg = null, inicio = (new Date()).getTime();
+
+		if (isNaN(i) || i < 0 || i >= assuntos.length || conversaAtiva)
+			return false;
+
+		$msg = adicionarMensagem(assuntos[i].pergunta);
+
+		conversaAtiva = true;
+
+		$.ajax({
+			url: "<%- root %>/api/pessoa/enviarMensagem",
+			method: "post",
+			data: JSON.stringify({
+				idpessoa: pessoa.id,
+				codpergunta: assuntos[i].codpergunta,
+				idconversa: idconversa
+			}),
+			contentType: "application/json",
+			processData: false,
+			success: function () {
+				// Não pode adicionar a resposta muito rápido na tela para não atrapalhar a UI
+				var delta = (new Date()).getTime() - inicio;
+
+				setTimeout(function () {
+					conversaAtiva = false;
+					$msg.find(".mensagem-eu img").remove();
+					$msg.find(".mensagem-eu").removeClass("espera");
+					adicionarMensagem(assuntos[i].resposta, pessoa.nome);
+				}, Math.max(1500 - delta, 0));
+			},
+			error: function () {
+				conversaAtiva = false;
+				$msg.find(".mensagem-eu img").remove();
+				$msg.find(".mensagem-eu").removeClass("espera").addClass("erro");
+				Swal.error("Algo deu errado! Por favor, tente novamente mais tarde " + emoji.sad);
+			}
+		});
+
+		return false;
+	}
+
+	function iniciarConversa() {
+		if ($.active)
+			return;
+
+		Swal.wait();
+
+		for (let i = 0; i < assuntos.length; i++) {
+			const option = document.createElement("option");
+			option.value = i;
+			option.textContent = assuntos[i].pergunta;
+			txtMensagem.appendChild(option);
+		}
+
+		$("#mensagem-inicial-painel").addClass("invisivel");
+
+		setTimeout(function () {
+			$("#mensagem-inicial-painel").remove();
+			adicionarMensagem(pessoa.boasvindas, pessoa.nome);
+			Swal.close();
+		}, 520);
+	}
+
+</script>

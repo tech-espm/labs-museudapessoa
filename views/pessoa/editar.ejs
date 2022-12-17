@@ -1,74 +1,190 @@
 ﻿<input type="hidden" id="id" name="id" value="<%=(item ? item.id : 0) %>" />
+<input type="hidden" id="htmlmensagem" name="htmlmensagem" value="" />
+<input type="hidden" id="htmlinicial" name="htmlinicial" value="" />
+<input type="hidden" id="boasvindas" name="boasvindas" value="" />
+<input type="hidden" id="jsonassuntos" name="jsonassuntos" value="" />
 
 <div class="row">
-	<div class="col-sm-6">
-		<div class="form-group">
-			<label for="login">Login</label>
-			<input id="login" name="login" maxlength="100" class="form-control text-uppercase" type="text" spellcheck="false" value="<%=(item ? item.login : '') %>" <%=(item ? 'readonly="readonly"' : '') %> />
-		</div>
-	</div>
-
-	<div class="col-sm-6">
+	<div class="col-sm-8">
 		<div class="form-group">
 			<label for="nome">Nome</label>
 			<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
 		</div>
 	</div>
+
+	<div class="col-sm-4">
+		<div class="form-group">
+			<label for="feminino">Artigo</label>
+			<select id="feminino" name="feminino" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<option value="1" <%-((item && item.feminino) ? 'selected="selected"' : '') %>>A</option>
+				<option value="0" <%-((item && !item.feminino) ? 'selected="selected"' : '') %>>O</option>
+			</select>
+		</div>
+	</div>
 </div>
 
-<% if (!item) { %>
 <div class="row">
-	<div class="col-sm-6">
+	<div class="col-md-4">
 		<div class="form-group">
-			<label for="senha">Senha</label>
-			<input id="senha" name="senha" maxlength="20" class="form-control" type="password" />
+			<label for="corfundo">Cor do Texto de Destaque</label>
+			<input id="corfundo" name="corfundo" class="form-control" type="color" value="<%=(item ? item.corfundo : '#000000') %>" />
 		</div>
 	</div>
 
-	<div class="col-sm-6">
+	<div class="col-md-4">
 		<div class="form-group">
-			<label for="senha2">Confirme a senha</label>
-			<input id="senha2" name="senha2" maxlength="20" class="form-control" type="password" />
+			<label for="corbotao">Cor do Botão</label>
+			<input id="corbotao" name="corbotao" class="form-control" type="color" value="<%=(item ? item.corbotao : '#000000') %>" />
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="form-group">
+			<label for="cortextobotao">Cor do Texto do Botão</label>
+			<input id="cortextobotao" name="cortextobotao" class="form-control" type="color" value="<%=(item ? item.cortextobotao : '#000000') %>" />
 		</div>
 	</div>
 </div>
+
+<hr class="my-5" />
+
+<h2 class="my-5 text-center">Imagens</h2>
+
+<% if (item) { %>
+<div class="my-3 text-center">Deixe os campos de imagem em branco para continuar a utilizar as imagens atuais.</div>
 <% } %>
 
+<div class="row">
+	<div class="col-md-4">
+		<div class="form-group">
+			<label for="fundo">Fundo</label>
+			<input id="fundo" name="fundo" class="form-control" type="file" accept="image/jpeg,image/png" />
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="form-group">
+			<label for="foto">Foto Inicial</label>
+			<input id="foto" name="foto" class="form-control" type="file" accept="image/jpeg,image/png" />
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="form-group">
+			<label for="avatar">Avatar</label>
+			<input id="avatar" name="avatar" class="form-control" type="file" accept="image/jpeg,image/png" />
+		</div>
+	</div>
+</div>
+
+<hr class="my-5" />
+
+<h2 class="my-5 text-center">Mensagem do Balão Inicial</h2>
+
+<div id="divHtmlmensagem"><%- (item ? item.htmlmensagem : '') %></div>
+
+<h2 class="my-5 text-center">Mensagem Inicial</h2>
+
+<div id="divHtmlinicial"><%- (item ? item.htmlinicial : '') %></div>
+
+<h2 class="my-5 text-center">Mensagem de Boas-Vindas do Chat</h2>
+
+<div id="divBoasvindas"><%- (item ? item.boasvindas : '') %></div>
+
+<h2 class="my-5 text-center">Assuntos</h2>
+
+<div class="my-3 text-center">
+	<button type="button" class="btn btn-primary" onclick="criarAssunto()"><i class="fa fa-fw fa-plus"></i> Criar Assunto</button>
+</div>
+
 <div class="form-group mb-0">
-	<label for="idperfil">Perfil</label>
-	<select id="idperfil" name="idperfil" class="form-control" size="1">
-		<option value="">Selecione...</option>
-		<% for (let i = 0; i < perfis.length; i++) { %>
-		<option value="<%= perfis[i].id %>" <%-((item && item.idperfil === perfis[i].id) ? 'selected="selected"' : '') %>><%= perfis[i].nome %></option>
-		<% } %>
+	<label for="assunto">Assunto</label>
+	<select id="assunto" class="form-control" size="1">
+		<option value="-1">Selecione...</option>
 	</select>
 </div>
 
+<div id="divAssunto" style="display: none;">
+	<hr class="my-5" />
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-group">
+				<label for="codpergunta">Código do Assunto</label>
+				<input id="codpergunta" maxlength="45" class="form-control" type="text" spellcheck="false" />
+			</div>
+		</div>
+	
+		<div class="col-md-8">
+			<div class="form-group">
+				<label for="pergunta">Pergunta</label>
+				<input id="pergunta" maxlength="250" class="form-control" type="text" spellcheck="true" />
+			</div>
+		</div>
+	</div>
+	
+	<div id="divResposta"><%- ((item && item.assuntos && item.assuntos[0] && item.assuntos[0].codpergunta) || '') %></div>	
+
+	<div class="row align-items-center mt-3">
+		<div class="col-md-6 text-center text-md-left pb-3 pb-md-0">
+			<button type="button" class="btn btn-primary" onclick="salvarAssunto()">Salvar Assunto</button>
+		</div>
+		<div class="col-md-6 text-center text-md-right">
+			<button type="button" class="btn btn-light" onclick="excluirAssunto()">Excluir Assunto</button>
+		</div>
+	</div>
+</div>
+
 <%- contentFor("scripts") %>
+<script type="text/javascript" src="<%- staticRoot %>/lib/ckeditor/ckeditor.js"></script>
+
 <script type="text/javascript">
 	//<![CDATA[
 	"use strict";
 
+	let assunto = document.getElementById("assunto"),
+		divAssunto = document.getElementById("divAssunto"),
+		indiceAssuntoAtual = -1,
+		assuntos = <%- ((item && item.jsonassuntos) || '[]') %>;
+
+	CKEDITOR.replace("divHtmlmensagem");
+	CKEDITOR.replace("divHtmlinicial");
+	CKEDITOR.replace("divBoasvindas");
+	CKEDITOR.replace("divResposta");
+
+	function setDataWithoutUndo(editor, data) {
+		editor.setData(data, function() { this.resetUndo(); });
+	}
+
 	$("#form").validate({
 		rules: {
-			login: {
-				required: true
-			},
 			nome: {
 				required: true
 			},
+			feminino: {
+				required: true
+			},
+			corfundo: {
+				required: true
+			},
+			corbotao: {
+				required: true
+			},
+			cortextobotao: {
+				required: true
+			},
 			//<% if (!item) { %>
-			senha: {
-				required: true,
-				minlength: 6
+			fundo: {
+				required: true
 			},
-			senha2: {
-				equalTo: "#senha"
+			foto: {
+				required: true
 			},
-			//<% } %>
-			idperfil: {
+			avatar: {
 				required: true
 			}
+			//<% } %>
 		},
 
 		submitHandler: function (form) {
@@ -77,21 +193,42 @@
 
 			Swal.wait();
 
+			$("#htmlmensagem").val(CKEDITOR.instances.divHtmlmensagem.getData());
+			$("#htmlinicial").val(CKEDITOR.instances.divHtmlinicial.getData());
+			$("#boasvindas").val(CKEDITOR.instances.divBoasvindas.getData());
+
+			if (indiceAssuntoAtual >= 0 && indiceAssuntoAtual < assuntos.length && !salvarAssunto())
+				return;
+
+			$("#jsonassuntos").val(JSON.stringify(assuntos));
+
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/usuario/editar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pessoa/editar", new FormData(form), function (response) {
 				if (response.success)
-					Swal.success("Usuário alterado com sucesso! " + emoji.happy);
+					Swal.success("Pessoa alterada com sucesso! " + emoji.happy);
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
 
 			//<% } else { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/usuario/criar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pessoa/criar", new FormData(form), function (response) {
 				if (response.success) {
 					resetForm("#form");
-					Swal.success("Usuário criado com sucesso! " + emoji.happy);
+
+					setDataWithoutUndo(CKEDITOR.instances.divHtmlmensagem, "");
+					setDataWithoutUndo(CKEDITOR.instances.divHtmlinicial, "");
+					setDataWithoutUndo(CKEDITOR.instances.divBoasvindas, "");
+
+					assuntos = [];
+					assunto.innerHTML = '<option value="-1">Selecione...</option>';
+
+					indiceAssuntoAtual = -1;
+					divAssunto.style.display = "none";
+					setDataWithoutUndo(CKEDITOR.instances.divResposta, "");
+
+					Swal.success("Pessoa criada com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}
@@ -100,5 +237,141 @@
 			//<% } %>
 		}
 	});
+
+	function criarAssunto() {
+		if (JsonWebApi.active)
+			return;
+
+		let codpergunta = null,
+			pergunta = null;
+
+		Swal.okcancelNoIcon({
+			html: '<label for="txtCodpergunta">Código do Assunto</label><input type="text" class="form-control" maxlength="45" spellcheck="false" autocomplete="off" id="txtCodpergunta" /><br/><label for="txtPergunta">Pergunta</label><input type="text" class="form-control" maxlength="250" spellcheck="true" autocomplete="off" id="txtPergunta" />',
+			confirmButtonText: "Criar",
+			preConfirm: function () {
+				codpergunta = $("#txtCodpergunta").val().normalize().trim();
+				pergunta = $("#txtPergunta").val().normalize().trim();
+				return true;
+			}
+		}, "Criar Assunto").then(function (result) {
+			if (JsonWebApi.active)
+				return;
+
+			if (result.value) {
+				if (!codpergunta) {
+					Swal.error("O código do assunto está vazio! " + emoji.sad);
+					return;
+				}
+
+				if (!pergunta) {
+					Swal.error("A pergunta está vazia! " + emoji.sad);
+					return;
+				}
+
+				const option = document.createElement("option");
+				option.value = assuntos.length;
+				option.textContent = codpergunta;
+				assunto.appendChild(option);
+
+				assuntos.push({
+					codpergunta: codpergunta,
+					pergunta: pergunta,
+					resposta: ""
+				});
+			}
+		});
+	}
+
+	function salvarAssunto() {
+		if (JsonWebApi.active || indiceAssuntoAtual < 0 || indiceAssuntoAtual >= assuntos.length)
+			return false;
+
+		const codpergunta = $("#codpergunta").val().normalize().trim(),
+			pergunta = $("#pergunta").val().normalize().trim(),
+			resposta = CKEDITOR.instances.divResposta.getData();
+
+		if (!codpergunta) {
+			Swal.error("O código do assunto está vazio! " + emoji.sad);
+			return false;
+		}
+
+		if (!pergunta) {
+			Swal.error("A pergunta está vazia! " + emoji.sad);
+			return false;
+		}
+
+		if (!resposta) {
+			Swal.error("A resposta está vazia! " + emoji.sad);
+			return false;
+		}
+
+		assuntos[indiceAssuntoAtual].codpergunta = codpergunta;
+		assuntos[indiceAssuntoAtual].pergunta = pergunta;
+		assuntos[indiceAssuntoAtual].resposta = resposta;
+
+		assunto.children[indiceAssuntoAtual + 1].textContent = codpergunta;
+
+		return true;
+	}
+
+	function excluirAssunto() {
+		if (JsonWebApi.active || indiceAssuntoAtual < 0 || indiceAssuntoAtual >= assuntos.length)
+			return;
+
+		Swal.okcancel({
+			html: 'Tem certeza que deseja excluir o assunto?',
+			confirmButtonText: "Excluir"
+		}, null, true).then(function (result) {
+			if (JsonWebApi.active)
+				return;
+
+			if (result.value) {
+				assuntos.splice(indiceAssuntoAtual, 1);
+
+				indiceAssuntoAtual = -1;
+				divAssunto.style.display = "none";
+				setDataWithoutUndo(CKEDITOR.instances.divResposta, "");
+
+				assunto.innerHTML = '<option value="-1">Selecione...</option>';
+				for (let i = 0; i < assuntos.length; i++) {
+					const option = document.createElement("option");
+					option.value = i;
+					option.textContent = assuntos[i].codpergunta;
+					assunto.appendChild(option);
+				}
+			}
+		});
+	}
+
+	(function () {
+		for (let i = 0; i < assuntos.length; i++) {
+			const option = document.createElement("option");
+			option.value = i;
+			option.textContent = assuntos[i].codpergunta;
+			assunto.appendChild(option);
+		}
+	})();
+
+	assunto.onchange = function () {
+		if (JsonWebApi.active)
+			return;
+
+		const i = parseInt(assunto.value);
+		if (isNaN(i) || i < 0 || i >= assuntos.length) {
+			indiceAssuntoAtual = -1;
+			divAssunto.style.display = "none";
+			setDataWithoutUndo(CKEDITOR.instances.divResposta, "");
+			return;
+		}
+
+		indiceAssuntoAtual = i;
+
+		$("#codpergunta").val(assuntos[i].codpergunta);
+		$("#pergunta").val(assuntos[i].pergunta);
+		setDataWithoutUndo(CKEDITOR.instances.divResposta, assuntos[i].resposta);
+
+		divAssunto.style.display = "";
+	};
+
 	//]]>
 </script>

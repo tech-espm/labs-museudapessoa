@@ -24,7 +24,7 @@ class PessoaApiRoute {
 		if (!u)
 			return;
 		const p = req.body as Pessoa,
-			r = await Pessoa.criar(p, req.uploadedFiles.fundo, req.uploadedFiles.avatar, req.uploadedFiles.imagem);
+			r = await Pessoa.criar(p, req.uploadedFiles.fundo, req.uploadedFiles.foto, req.uploadedFiles.avatar);
 		if (r)
 			res.status(400).json(r);
 		else
@@ -33,18 +33,19 @@ class PessoaApiRoute {
 
 	@app.http.post()
 	@app.route.formData()
-	public static async alterar(req: app.Request, res: app.Response) {
+	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 		const p = req.body as Pessoa,
-			r = await Pessoa.alterar(p, req.uploadedFiles.fundo, req.uploadedFiles.avatar, req.uploadedFiles.imagem);
+			r = await Pessoa.alterar(p, req.uploadedFiles.fundo, req.uploadedFiles.foto, req.uploadedFiles.avatar);
 		if (r)
 			res.status(400).json(r);
 		else
 			res.json(p);
 	}
 
+	@app.http.delete()
 	public static async excluir(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req, res);
 		if (!u)

@@ -1,0 +1,23 @@
+﻿<table class="table table-flush table-striped table-hover" id="tabela"></table>
+
+<%- contentFor("scripts") %>
+<script type="text/javascript">
+	//<![CDATA[
+	"use strict";
+
+	prepareDataTable("tabela", {
+		order: [],
+		deferRender: true,
+		columns: [
+			// , date_format(l.criacao, '%d/%m/%Y %H:%i') criacao
+			{ title: "Data", "class": "col-min", "type": "customdatetimeint", data: "criacao" },
+			{ title: "Pessoa", render: encode, data: "pessoa" },
+			{ title: "Assunto", render: encode, data: "codpergunta" },
+			{ title: "Id da Conversa", "class": "col-min", data: "idconversa" }
+		],
+		data: <%- JSON.stringify(lista) %>,
+		export: { title: "Log de Mensagens" }
+	});
+
+	//]]>
+</script>

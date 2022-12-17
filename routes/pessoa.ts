@@ -9,10 +9,10 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/editar", { titulo: "Criar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: null });
+			res.render("pessoa/editar", { titulo: "Criar Pessoa", usuario: u, item: null });
 	}
 
-	public static async alterar(req: app.Request, res: app.Response) {
+	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u) {
 			res.redirect(app.root + "/acesso");
@@ -22,7 +22,7 @@ class PessoaRoute {
 			if (isNaN(id) || !(item = await Pessoa.obter(id)))
 				res.render("index/nao-encontrado", { usuario: u });
 			else
-				res.render("pessoa/editar", { titulo: "Editar Pessoa", usuario: u, assuntos: await Assunto.listar(), item: item });
+				res.render("pessoa/editar", { titulo: "Editar Pessoa", usuario: u, item: item });
 		}
 	}
 
@@ -39,7 +39,7 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/log", { titulo: "Log de Mensagens", layout: "layout-tabela", usuario: u, datatables: true, lista: JSON.stringify(await Pessoa.logMensagens()) });
+			res.render("pessoa/log", { titulo: "Log de Mensagens", layout: "layout-tabela", usuario: u, datatables: true, lista: await Pessoa.logMensagens() });
 	}
 }
 
