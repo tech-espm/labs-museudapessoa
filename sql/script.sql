@@ -9,7 +9,7 @@ CREATE TABLE perfil (
   UNIQUE KEY nome_UN (nome)
 );
 
-INSERT INTO perfil (nome) VALUES ('ADMINISTRADOR'), ('COMUM');
+INSERT INTO perfil (nome) VALUES ('Administrador'), ('Comum');
 
 -- DROP TABLE IF EXISTS usuario;
 CREATE TABLE usuario (
@@ -26,7 +26,7 @@ CREATE TABLE usuario (
   CONSTRAINT idperfil_FK FOREIGN KEY (idperfil) REFERENCES perfil (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-INSERT INTO usuario (login, nome, idperfil, senha, token, criacao) VALUES ('ADMIN', 'ADMINISTRADOR', 1, 'peTcC99vkvvLqGQL7mdhGuJZIvL2iMEqvCNvZw3475PJ:JVyo1Pg2HyDyw9aSOd3gNPT30KdEyiUYCjs7RUzSoYGN', NULL, NOW());
+INSERT INTO usuario (login, nome, idperfil, senha, token, criacao) VALUES ('ADMIN', 'Administrador', 1, 'peTcC99vkvvLqGQL7mdhGuJZIvL2iMEqvCNvZw3475PJ:JVyo1Pg2HyDyw9aSOd3gNPT30KdEyiUYCjs7RUzSoYGN', NULL, NOW());
 
 -- DROP TABLE IF EXISTS assunto;
 CREATE TABLE assunto (

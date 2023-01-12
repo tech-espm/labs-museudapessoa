@@ -16,7 +16,7 @@
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
 		],
 		data: <%- JSON.stringify(lista) %>,
-		export: { title: "Usuários" }
+		export: { xlsx: true, title: "Usuários" }
 	});
 
 	$("#tabela").on("click", "tbody button", function () {

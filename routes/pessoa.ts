@@ -9,7 +9,12 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/editar", { titulo: "Criar Pessoa", usuario: u, item: null });
+			res.render("pessoa/editar", {
+				titulo: "Criar Pessoa",
+				textoSubmit: "Criar Pessoa",
+				usuario: u,
+				item: null
+			});
 	}
 
 	public static async editar(req: app.Request, res: app.Response) {
@@ -22,7 +27,12 @@ class PessoaRoute {
 			if (isNaN(id) || !(item = await Pessoa.obter(id)))
 				res.render("index/nao-encontrado", { usuario: u });
 			else
-				res.render("pessoa/editar", { titulo: "Editar Pessoa", usuario: u, item: item });
+				res.render("pessoa/editar", {
+					titulo: "Editar Pessoa",
+					textoSubmit: "Salvar Pessoa",
+					usuario: u,
+					item: item
+				});
 		}
 	}
 
@@ -31,7 +41,14 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/listar", { titulo: "Gerenciar Pessoas", layout: "layout-tabela", usuario: u, datatables: true, lista: await Pessoa.listar() });
+			res.render("pessoa/listar", {
+				titulo: "Gerenciar Pessoas",
+				layout: "layout-tabela",
+				usuario: u,
+				datatables: true,
+				xlsx: true,
+				lista: await Pessoa.listar()
+			});
 	}
 
 	public static async log(req: app.Request, res: app.Response) {
@@ -39,7 +56,14 @@ class PessoaRoute {
 		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("pessoa/log", { titulo: "Log de Mensagens", layout: "layout-tabela", usuario: u, datatables: true, lista: await Pessoa.logMensagens() });
+			res.render("pessoa/log", {
+				titulo: "Log de Mensagens",
+				layout: "layout-tabela",
+				usuario: u,
+				datatables: true,
+				xlsx: true,
+				lista: await Pessoa.logMensagens()
+			});
 	}
 }
 

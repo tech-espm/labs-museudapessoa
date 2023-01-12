@@ -30,7 +30,14 @@ class UsuarioRoute {
 		if (!u || !u.admin)
 			res.redirect(app.root + "/acesso");
 		else
-			res.render("usuario/listar", { titulo: "Gerenciar Usuários", layout: "layout-tabela", usuario: u, datatables: true, lista: await Usuario.listar() });
+			res.render("usuario/listar", {
+				titulo: "Gerenciar Usuários",
+				layout: "layout-tabela",
+				usuario: u,
+				datatables: true,
+				xlsx: true,
+				lista: await Usuario.listar()
+			});
 	}
 }
 

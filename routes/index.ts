@@ -9,7 +9,7 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("index/index", { titulo: "Dashboard", usuario: u });
+			res.render("index/index", { layout: "layout-sem-form", titulo: "Dashboard", usuario: u });
 	}
 
 	@app.route.methodName("/assistente/:n?")

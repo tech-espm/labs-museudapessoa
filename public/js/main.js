@@ -2256,6 +2256,61 @@ window.DataUtil = {
 		const hoje = DataUtil.dateUTC(deltaSegundos);
 
 		return DataUtil.formatarBrComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	},
+
+	inicioDoMesComoDateUTC: function (ano, mes) {
+		if (!ano || !mes) {
+			const agora = new Date();
+			if (!ano)
+				ano = agora.getFullYear();
+			if (!mes)
+				mes = agora.getMonth() + 1;
+		}
+
+		return new Date(Date.UTC(ano, mes - 1, 1));
+	},
+
+	fimDoMesComoDateUTC: function (ano, mes) {
+		if (!ano || !mes) {
+			const agora = new Date();
+			if (!ano)
+				ano = agora.getFullYear();
+			if (!mes)
+				mes = agora.getMonth() + 1;
+		}
+
+		if (mes === 12) {
+			mes = 1;
+			ano++;
+		} else {
+			mes++;
+		}
+
+		return new Date(Date.UTC(ano, mes - 1, 1) - (24 * 60 * 60 * 1000));
+	},
+
+	inicioDoMesISO: function (ano, mes) {
+		const inicioDoMes = DataUtil.inicioDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatar(inicioDoMes.getUTCFullYear(), inicioDoMes.getUTCMonth() + 1, inicioDoMes.getUTCDate());
+	},
+
+	fimDoMesISO: function (ano, mes) {
+		const fimDoMes = DataUtil.fimDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatar(fimDoMes.getUTCFullYear(), fimDoMes.getUTCMonth() + 1, fimDoMes.getUTCDate());
+	},
+
+	inicioDoMesBr: function (ano, mes) {
+		const inicioDoMes = DataUtil.inicioDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatarBr(inicioDoMes.getUTCFullYear(), inicioDoMes.getUTCMonth() + 1, inicioDoMes.getUTCDate());
+	},
+
+	fimDoMesBr: function (ano, mes) {
+		const fimDoMes = DataUtil.fimDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatarBr(fimDoMes.getUTCFullYear(), fimDoMes.getUTCMonth() + 1, fimDoMes.getUTCDate());
 	}
 };
 window.prepareDatePicker = function (id, options) {
